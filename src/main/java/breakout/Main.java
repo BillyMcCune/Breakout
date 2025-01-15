@@ -76,7 +76,7 @@ public class Main extends Application {
   public Scene setupScene(int width, int height, Paint background) {
     myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
-    myBall = new Ball(myPaddle ,BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
+    myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
     myBlock = new Block(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_HEALTH, width / 2, height / 4);
 //    System.out.println(myBlock.getHealth());
@@ -159,12 +159,12 @@ public class Main extends Application {
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
     switch (code) {
       case RIGHT -> {
-          myPaddle.move(PADDLE_SPEED);
-          myPaddle.checkEdges(SIZE);
+        myPaddle.move(PADDLE_SPEED);
+        myPaddle.checkEdges(SIZE);
       }
       case LEFT -> {
-          myPaddle.move(-PADDLE_SPEED);
-          myPaddle.checkEdges(SIZE);
+        myPaddle.move(-PADDLE_SPEED);
+        myPaddle.checkEdges(SIZE);
       }
     }
   }
