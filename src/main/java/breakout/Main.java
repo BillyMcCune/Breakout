@@ -49,6 +49,7 @@ public class Main extends Application {
   public static final int BLOCK_WIDTH = 100;
   public static final Color BLOCK_COLOR = Color.WHITE;
   public static final int BLOCK_HEALTH = 1;
+  public static int PLAYER_HEALTH = 1;
 
   private Paddle myPaddle;
   private Ball myBall;
@@ -74,16 +75,12 @@ public class Main extends Application {
   }
 
   public Scene setupScene(int width, int height, Paint background) {
-    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
-    myPaddle.getPaddle().setFill(PADDLE_COLOR);
-    myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
-    myBall.getBall().setFill(BALL_COLOR);
     myBlock = new Block(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_HEALTH, width / 2, height / 4);
 //    System.out.println(myBlock.getHealth());
     myBlock.getBlock().setFill(BLOCK_COLOR);
     root = new Group();
-    root.getChildren().add(myBall.getBall());
-    root.getChildren().add(myPaddle.getPaddle());
+    SetUpBall(root);
+    SetUpPaddle(root);
     root.getChildren().add(myBlock.getBlock());
 
     myScene = new Scene(root, width, height, background);
@@ -92,11 +89,35 @@ public class Main extends Application {
     return myScene;
   }
 
+  public void SetUpBall(Group root){
+    myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
+    myBall.getBall().setFill(BALL_COLOR);
+    root.getChildren().add(myBall.getBall());
+  }
+
+  public void SetUpPaddle(Group root){
+    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
+    myPaddle.getPaddle().setFill(PADDLE_COLOR);
+    root.getChildren().add(myPaddle.getPaddle());
+  }
+
   private void step(double elapsedTime) {
     myBall.move(elapsedTime);
     myBall.bounce(SIZE, SIZE);
+    if(myBall.BallHitBottom()){
+      PLAYER_HEALTH -= 1;
+      if (PLAYER_HEALTH <= 0) {
+        DoReset();
+      }
+    }
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlockCollision(myBlock, myBall);
+  }
+
+  private void DoReset() {
+    root.getChildren().remove(myBall.getBall());
+    root.getChildren().remove(myPaddle.getPaddle());
+
   }
 
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {

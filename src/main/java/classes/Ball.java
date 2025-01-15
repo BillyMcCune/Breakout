@@ -43,14 +43,20 @@ public class Ball {
   }
 
   public void bounce(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-    if (ball.getCenterX() > SCREEN_WIDTH - ball.getBoundsInLocal().getWidth()
-        || ball.getCenterX() < 0) {
+    if (ball.getCenterX() > SCREEN_WIDTH - ball.getBoundsInLocal().getWidth()) {
       myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
     }
     if (ball.getCenterY() > SCREEN_HEIGHT - ball.getBoundsInLocal().getHeight()
         || ball.getCenterY() - ball.getBoundsInLocal().getHeight() < 0) {
       myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
     }
+  }
+
+  public boolean BallHitBottom() {
+    if (ball.getCenterX() < 0) {
+      return true;
+    }
+    return false;
   }
 
   public void paddleBounce() {
