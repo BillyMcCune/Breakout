@@ -43,7 +43,8 @@ public class Ball {
   }
 
   public void bounce(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-    if (ball.getCenterX() > SCREEN_WIDTH - ball.getBoundsInLocal().getWidth()) {
+    if (ball.getCenterX() > SCREEN_WIDTH - ball.getBoundsInLocal().getWidth() ||
+    ball.getCenterX() - ball.getBoundsInLocal().getWidth() < 0) {
       myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
     }
     if (ball.getCenterY() > SCREEN_HEIGHT - ball.getBoundsInLocal().getHeight()
@@ -52,8 +53,8 @@ public class Ball {
     }
   }
 
-  public boolean BallHitBottom() {
-    if (ball.getCenterX() < 0) {
+  public boolean BallHitBottom(int SCREEN_HEIGHT) {
+    if (ball.getCenterY() > SCREEN_HEIGHT - ball.getBoundsInLocal().getHeight()) {
       return true;
     }
     return false;

@@ -79,8 +79,8 @@ public class Main extends Application {
 //    System.out.println(myBlock.getHealth());
     myBlock.getBlock().setFill(BLOCK_COLOR);
     root = new Group();
-    SetUpBall(root);
-    SetUpPaddle(root);
+    SetUpPaddle();
+    SetUpBall();
     root.getChildren().add(myBlock.getBlock());
 
     myScene = new Scene(root, width, height, background);
@@ -89,13 +89,13 @@ public class Main extends Application {
     return myScene;
   }
 
-  public void SetUpBall(Group root){
+  public void SetUpBall(){
     myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
     root.getChildren().add(myBall.getBall());
   }
 
-  public void SetUpPaddle(Group root){
+  public void SetUpPaddle(){
     myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
     root.getChildren().add(myPaddle.getPaddle());
@@ -103,13 +103,13 @@ public class Main extends Application {
 
   private void step(double elapsedTime) {
     myBall.move(elapsedTime);
-    myBall.bounce(SIZE, SIZE);
-    if(myBall.BallHitBottom()){
+    if(myBall.BallHitBottom(SIZE)){
       PLAYER_HEALTH -= 1;
       if (PLAYER_HEALTH <= 0) {
         DoReset();
       }
     }
+    myBall.bounce(SIZE, SIZE);
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlockCollision(myBlock, myBall);
   }
@@ -117,7 +117,8 @@ public class Main extends Application {
   private void DoReset() {
     root.getChildren().remove(myBall.getBall());
     root.getChildren().remove(myPaddle.getPaddle());
-
+    SetUpPaddle();
+    SetUpBall();
   }
 
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {
