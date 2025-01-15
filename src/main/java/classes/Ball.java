@@ -10,6 +10,7 @@ import javafx.scene.shape.Circle;
 import javax.swing.BoundedRangeModel;
 import java.util.Random;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Shape;
 
 
 public class Ball {
