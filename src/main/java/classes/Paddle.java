@@ -30,4 +30,13 @@ public class Paddle {
     return this.paddle;
   }
 
+  public void checkEdges(int SCREEN_WIDTH){
+    if (this.paddle.getX() + this.paddle.getBoundsInLocal().getWidth() > SCREEN_WIDTH){
+      this.paddle.setX(SCREEN_WIDTH - this.paddle.getBoundsInLocal().getWidth());
+    }
+    if (this.paddle.getX() < 0){
+      this.paddle.setX(0);
+    }
+  }
+
 }

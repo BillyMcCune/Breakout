@@ -1,5 +1,5 @@
 # breakout
-## NAME
+## Billy McCune
 
 
 DO NO FORK THIS REPOSITORY, clone it directly to your computer.
@@ -9,11 +9,12 @@ This project implements the game of Breakout with multiple levels.
 
 ### Timeline
 
- * Start Date: 
+ * Start Date: 01/12/2024
 
  * Finish Date: 
 
- * Hours Spent:
+ * Hours Spent: 
+ * 01/15/2024: 
 
 
 
@@ -27,13 +28,13 @@ This project implements the game of Breakout with multiple levels.
 
 ### Running the Program
 
- * Main class:
+ * Main class: 
 
  * Data files needed: 
 
  * Key/Mouse inputs:
 
- * Cheat keys:
+ * Cheat keys: 
 
 
 
