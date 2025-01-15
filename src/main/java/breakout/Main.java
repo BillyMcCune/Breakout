@@ -76,11 +76,10 @@ public class Main extends Application {
   public Scene setupScene(int width, int height, Paint background) {
     myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
-    myBall = new Ball(BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED, width / 2,
-        3 * height / 5);
+    myBall = new Ball(myPaddle ,BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
     myBlock = new Block(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_HEALTH, width / 2, height / 4);
-    System.out.println(myBlock.getHealth());
+//    System.out.println(myBlock.getHealth());
     myBlock.getBlock().setFill(BLOCK_COLOR);
     root = new Group();
     root.getChildren().add(myBall.getBall());

@@ -22,13 +22,13 @@ public class Ball {
   private Point2D myVelocity;
   private int health;
 
-  public Ball(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-    this(0,10,10,3,SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
+  public Ball(Paddle paddle) {
+    this(paddle,0,10,10,3);
   }
 
-  public Ball(double xDirection, double yDirection, double size, double speed, int x , int y) {
+  public Ball(Paddle paddle, double xDirection, double yDirection, double size, double speed) {
     myVelocity = new Point2D(speed*xDirection, speed*yDirection);
-    ball = new Circle(x, y, size);
+    ball = new Circle((int)paddle.getPaddle().getX()  + (int)(paddle.getPaddle().getWidth()/2), (int)paddle.getPaddle().getY()-(int)paddle.getPaddle().getHeight(), size);
   }
 
   public Circle getBall(){
