@@ -2,26 +2,35 @@
 ### Billy McCune
 
 
-#### Examples
+[//]: # (#### Examples)
 
-You need to put blank lines to write some text
+[//]: # ()
+[//]: # (You need to put blank lines to write some text)
 
-in separate paragraphs.
+[//]: # ()
+[//]: # (in separate paragraphs.)
 
+[//]: # ()
+[//]: # ()
+[//]: # (Emphasis, aka italics, with *asterisks* or _underscores_.)
 
-Emphasis, aka italics, with *asterisks* or _underscores_.
+[//]: # ()
+[//]: # (Strong emphasis, aka bold, with **asterisks** or __underscores__.)
 
-Strong emphasis, aka bold, with **asterisks** or __underscores__.
+[//]: # ()
+[//]: # (Combined emphasis with **asterisks and _underscores_**.)
 
-Combined emphasis with **asterisks and _underscores_**.
+[//]: # ()
+[//]: # ()
+[//]: # (You can also make lists:)
 
+[//]: # (* Bullets are made with asterisks)
 
-You can also make lists:
-* Bullets are made with asterisks
-1. You can order things with numbers.
+[//]: # (1. You can order things with numbers.)
 
-
-You can put links in like this: [Duke CompSci](https://www.cs.duke.edu)
+[//]: # ()
+[//]: # ()
+[//]: # (You can put links in like this: [Duke CompSci]&#40;https://www.cs.duke.edu&#41;)
 
 
 
@@ -41,20 +50,20 @@ You can put links in like this: [Duke CompSci](https://www.cs.duke.edu)
 
 ## Block Ideas
 
- * Idea #1: power up
+ * Idea #1: power up - block when hit drops a power up
 
- * Idea #2: multi-hit
+ * Idea #2: multi-hit - block has lots of health - more that one 
 
- * Idea #3: exploding block
+ * Idea #3: exploding block - block explodes destroying other blocks
 
 
 ## Power-up Ideas
 
- * Idea #1: Speed Up
+ * Idea #1: Speed Up - ball speeds up
 
- * Idea #2: Extra Balls
+ * Idea #2: Extra Balls - more balls spawn
 
- * Idea #3: Big Ball with increased damage
+ * Idea #3: Big Ball with increased damage - ball grows in size and does more damage not bouncing off blocks until all its damage is delt (If ball does 2 damage on hit and there are two one health blocks in its way it will go through the first block and bounce off of the second)
 
 
 ## Cheat Key Ideas
@@ -70,22 +79,66 @@ You can put links in like this: [Duke CompSci](https://www.cs.duke.edu)
 
 ## Level Descriptions
 
- * Idea #1: Fat Man: massive exploding block in the center with a lot of health, but when destroyed explodes all the other blocks in the level
+ * Idea #1: **Fat Man**: massive exploding block in the center with a lot of health, but when destroyed explodes all the other blocks in the level
+* My rough picture is the following: (the 5's are the exploding block(s))
 
- * Idea #2: Level ??? Fast Ball: Every block has a down buffed speed increase power up making the ball slowly speed up as the player progresses until it seems unreasonable.
+0 1 1 1 1 0
+
+1 1 5 5 1 1 
+
+1 1 5 5 1 1
+
+1 1 1 1 1 1
+
+1 1 1 1 1 1
+
+0 1 1 1 1 0
+
+0 0 0 0 0 0
+
+0 0 0 0 0 0
+
+1 5 1 5 1 5
+
+0 0 0 0 0 0
+
+
+
+ * Idea #2: Level ??? *Fast Ball*: Every block has a down buffed speed increase power up making the ball slowly speed up as the player progresses until it seems unreasonable.
+ * The numbers here represent health of the blocks
+
+9 9 9 9 9 9
+
+1 1 1 1 1 1
+
+7 6 4 4 6 7
+
+1 1 1 1 1 1
+
+1 1 1 1 1 1
+
+3 6 9 9 6 3
+
+0 0 0 0 0 0
+
+0 0 0 0 0 0
+
+1 5 1 5 1 5
+
+0 0 0 0 0 0
 
 
 ## Class Ideas
 
  * Idea #1: Ball 
- * Methods: move ball - moves the ball
+ * Methods: setSpeed() -  changes the speed of the bal for the speed up powerup
 
  * Idea #2: Paddle
- * Methods: move paddle - moves the paddle according to the left and right keys or the a and d keys
+ * Methods: ChangeColorToRandom() - changes the color of the paddle to a differnet random color from a list of colors
 
  * Idea #3: Block
- * Methods: check collision - checks if ball hit the block
+ * Methods: setType() - changes the type of block whether exploding or not
 
- * Idea #4: Moving Block
- * Methods: Create_route - sets the route for the moving block
+ * Idea #4: Power-Up
+ * Methods: setDuration() - sets the duration of how long the power up will last for power ups with a duration (Big Ball and potentially speed up)
 
