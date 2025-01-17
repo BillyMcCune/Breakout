@@ -62,12 +62,15 @@ public class Main extends Application {
   private Block myBlock;
   private List<Block> myBlocks;
   private int LevelNumber = 1;
-  private final Text end_message = new Text(SIZE/2,SIZE/2,"Game Over");
+  private String winning_message = "You WON!!!";
+  private String lost_message = "You Lost!!!";
+  private final Text end_message = new Text(SIZE/2,SIZE/2,lost_message);
   private Text healthText = new Text("Health: " + PLAYER_HEALTH);
   private Text scoreText = new Text("Score: " + PlAYER_SCORE);
   private int SCORE_MESSAGE_OFFSET = 10;
   private int HEALTH_MESSAGE_OFFSET = SIZE-(int)healthText.getBoundsInLocal().getWidth()*2-20;
   private final Timeline animation = new Timeline();
+  private boolean playerWon = false;
   /**
    * Initialize what will be displayed.
    */
@@ -113,7 +116,9 @@ public class Main extends Application {
     movePaddle(myPaddle);
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlocksCollision(myBlocks, myBall);
-    checkBlocksStatus(myBlocks);
+    if(checkBlocksGone(myBlocks)){
+      nextLevel();
+    }
   }
 
   private void displayStats(){
@@ -144,13 +149,13 @@ public class Main extends Application {
   }
 
 
-  private void checkBlocksStatus(List<Block> blocks) {
+  private boolean checkBlocksGone(List<Block> blocks) {
     for (Block block : blocks) {
       if (root.getChildren().contains(block.getBlock())) {
-        return;
+        return false;
       }
     }
-    nextLevel();
+   return true;
   }
 
   private void EndGame() {
@@ -159,7 +164,7 @@ public class Main extends Application {
     DisplayEndMessage();
   }
 
-  private void DisplayEndMessage(){
+  private void DisplayEndMessage() {
     end_message.setTextAlignment(TextAlignment.LEFT);
     end_message.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
     end_message.setFill(DUKE_DARK_BLUE);
@@ -167,24 +172,31 @@ public class Main extends Application {
     end_message.setStrokeWidth(2);
     end_message.setX(SIZE / 2 - end_message.getLayoutBounds().getWidth() / 2);
     end_message.setY(SIZE / 2 - end_message.getLayoutBounds().getHeight() / 2);
+    if(playerWon){
+      end_message.setText(winning_message);
+    }
     root.getChildren().add(end_message);
     myScene.setFill(Color.BLACK);
   }
 
-  public void nextLevel() {
+  private void nextLevel() {
     LevelNumber++;
     myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
     DoReset();
   }
 
+  private void playerWon(){
+    playerWon = true;
+    EndGame();
+  }
 
   private List<Block> getBlocksForLevel(int LEVEL_NUMBER) {
     List<Block> blocks = new ArrayList<>();
     try {
       InputStream in = getClass().getResourceAsStream("/levels/level" + LEVEL_NUMBER + ".txt");
       if (in == null) {
-        throw new FileNotFoundException("Could not find level1.txt in resources.");
+       throw new FileNotFoundException();
       }
       Scanner levelScanner = new Scanner(in);
       int current_spot = 0;
@@ -217,7 +229,8 @@ public class Main extends Application {
         }
       }
     } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
+      playerWon();
+      return blocks;
     }
     return blocks;
   }
