@@ -17,9 +17,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.text.*;
 
 
 /**
@@ -64,15 +67,17 @@ public class Main extends Application {
   private int LevelNumber = 1;
   private String winning_message = "You WON!!!";
   private String lost_message = "You Lost!!!";
-  private final Text end_message = new Text(SIZE/2,SIZE/2,lost_message);
+  private final Text end_message = new Text(SIZE / 2, SIZE / 2, lost_message);
   private Text healthText = new Text("Health: " + PLAYER_HEALTH);
   private Text scoreText = new Text("Score: " + PlAYER_SCORE);
   private Text levelText = new Text("Level: " + LevelNumber);
-  private int LEVEL_MESSAGE_OFFSET = SIZE/2-(int)levelText.getBoundsInLocal().getWidth();
+  private int LEVEL_MESSAGE_OFFSET = SIZE / 2 - (int) levelText.getBoundsInLocal().getWidth();
   private int SCORE_MESSAGE_OFFSET = 10;
-  private int HEALTH_MESSAGE_OFFSET = SIZE-(int)healthText.getBoundsInLocal().getWidth()*2-20;
+  private int HEALTH_MESSAGE_OFFSET =
+      SIZE - (int) healthText.getBoundsInLocal().getWidth() * 2 - 20;
   private final Timeline animation = new Timeline();
   private boolean playerWon = false;
+
   /**
    * Initialize what will be displayed.
    */
@@ -118,12 +123,12 @@ public class Main extends Application {
     movePaddle(myPaddle);
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlocksCollision(myBlocks, myBall);
-    if(checkBlocksGone(myBlocks)){
+    if (checkBlocksGone(myBlocks)) {
       nextLevel();
     }
   }
 
-  private void displayStats(){
+  private void displayStats() {
     scoreText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     scoreText.setFill(Color.WHITE);
     scoreText.setText("Score: " + PlAYER_SCORE);
@@ -169,7 +174,7 @@ public class Main extends Application {
         return false;
       }
     }
-   return true;
+    return true;
   }
 
   private void EndGame() {
@@ -186,7 +191,7 @@ public class Main extends Application {
     end_message.setStrokeWidth(2);
     end_message.setX(SIZE / 2 - end_message.getLayoutBounds().getWidth() / 2);
     end_message.setY(SIZE / 2 - end_message.getLayoutBounds().getHeight() / 2);
-    if(playerWon){
+    if (playerWon) {
       end_message.setText(winning_message);
     }
     root.getChildren().add(end_message);
@@ -200,7 +205,7 @@ public class Main extends Application {
     DoReset();
   }
 
-  private void playerWon(){
+  private void playerWon() {
     playerWon = true;
     EndGame();
   }
@@ -210,7 +215,7 @@ public class Main extends Application {
     try {
       InputStream in = getClass().getResourceAsStream("/levels/level" + LEVEL_NUMBER + ".txt");
       if (in == null) {
-       throw new FileNotFoundException();
+        throw new FileNotFoundException();
       }
       Scanner levelScanner = new Scanner(in);
       int current_spot = 0;
@@ -262,7 +267,8 @@ public class Main extends Application {
   }
 
   private void SetUpPaddle() {
-    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2 - PADDLE_WIDTH/2, 7 * SIZE / 8);
+    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2 - PADDLE_WIDTH / 2,
+        7 * SIZE / 8);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
     root.getChildren().add(myPaddle.getPaddle());
   }
