@@ -1,7 +1,7 @@
 package classes;
 
-import java.util.Random;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Block {
@@ -11,13 +11,20 @@ public class Block {
   private Point2D position;
   private Rectangle block;
   private int health;
+  private Color color;
+  private Color outlineColor = Color.BLACK;
+  private int outlineWidth = 2;
 
-  public Block(int BLOCKWIDTH, int BLOCKHEIGHT, int health, int x, int y) {
+  public Block(int BLOCKWIDTH, int BLOCKHEIGHT, int health, int x, int y, Color color) {
+    this.color = color;
     this.position = new Point2D(x, y);
     this.BLOCKWIDTH = BLOCKWIDTH;
     this.BLOCKHEIGHT = BLOCKHEIGHT;
     this.health = health;
     this.block = new Rectangle(x, y, BLOCKWIDTH, BLOCKHEIGHT);
+    this.block.setFill(color);
+    this.block.setStroke(outlineColor);
+    this.block.setStrokeWidth(outlineWidth);
   }
 
   public Rectangle getBlock() {
@@ -30,5 +37,9 @@ public class Block {
 
   public void setHealth(int health) {
     this.health = health;
+  }
+
+  public Color getColor() {
+    return this.color;
   }
 }

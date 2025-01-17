@@ -1,16 +1,7 @@
 package classes;
 
-import java.util.ArrayList;
-import java.util.Random;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import java.util.List;
-import javafx.scene.Group;
-import javafx.scene.shape.Circle;
-import javax.swing.BoundedRangeModel;
-import java.util.Random;
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Circle;
 
 
 public class Ball {

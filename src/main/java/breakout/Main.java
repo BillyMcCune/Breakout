@@ -3,29 +3,22 @@ package breakout;
 import classes.Ball;
 import classes.Block;
 import classes.Paddle;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Application;
-import javafx.css.Size;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.layout.Background;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.scene.shape.Circle;
-import java.util.Random;
+import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.image.ImageView;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.Scanner;
 
 
 /**
@@ -40,7 +33,6 @@ public class Main extends Application {
   public static final Color DUKE_BLUE = new Color(0, 0.188, 0.529, 1);
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
-  private Scene myScene;
   public static final int SIZE = 600;
   public static final int PADDLE_SPEED = 10;
   public static final int PADDLE_WIDTH = 100;
@@ -56,16 +48,14 @@ public class Main extends Application {
   public static final Color BLOCK_COLOR = Color.WHITE;
   public static final int BLOCK_HEALTH = 1;
   public static int PLAYER_HEALTH = 1;
-
-  public static int MAX_BLOCKS_IN_ROW = (int) 6;
-  public static int MAX_BLOCKS_IN_COL = (int) 20;
-
+  public static int MAX_BLOCKS_IN_ROW = 6;
+  public static int MAX_BLOCKS_IN_COL = 20;
+  public Group root;
+  private Scene myScene;
   private Paddle myPaddle;
   private Ball myBall;
   private Block myBlock;
   private List<Block> myBlocks;
-
-  public Group root;
 
   /**
    * Initialize what will be displayed.
