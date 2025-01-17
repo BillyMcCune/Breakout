@@ -19,6 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.text.*;
 
 
 /**
@@ -50,9 +51,10 @@ public class Main extends Application {
   public static final int BLOCK_WIDTH = 100;
   public static final Color BLOCK_COLOR = Color.WHITE;
   public static final int BLOCK_HEALTH = 1;
-  public static int PLAYER_HEALTH = 1;
   public static int MAX_BLOCKS_IN_ROW = 6;
   public static int MAX_BLOCKS_IN_COL = 20;
+  public static int PLAYER_HEALTH = 5;
+  public static int PlAYER_SCORE = 0;
   public Group root;
   private Scene myScene;
   private Paddle myPaddle;
@@ -60,7 +62,12 @@ public class Main extends Application {
   private Block myBlock;
   private List<Block> myBlocks;
   private int LevelNumber = 1;
-
+  private final Text end_message = new Text(SIZE/2,SIZE/2,"Game Over");
+  private Text healthText = new Text("Health: " + PLAYER_HEALTH);
+  private Text scoreText = new Text("Score: " + PlAYER_SCORE);
+  private int SCORE_MESSAGE_OFFSET = 10;
+  private int HEALTH_MESSAGE_OFFSET = SIZE-(int)healthText.getBoundsInLocal().getWidth()*2-20;
+  private final Timeline animation = new Timeline();
   /**
    * Initialize what will be displayed.
    */
@@ -71,7 +78,6 @@ public class Main extends Application {
     stage.setTitle(TITLE);
     stage.show();
     // attach "game loop" to timeline to play it (basically just calling step() method repeatedly forever)
-    Timeline animation = new Timeline();
     animation.setCycleCount(Timeline.INDEFINITE);
     animation.getKeyFrames()
         .add(new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY)));
@@ -85,6 +91,7 @@ public class Main extends Application {
     SetUpBall();
     myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
+    displayStats();
     myScene = new Scene(root, width, height, background);
     // respond to input
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
@@ -95,9 +102,11 @@ public class Main extends Application {
   private void step(double elapsedTime) {
     myBall.move(elapsedTime);
     if (myBall.BallHitBottom(SIZE)) {
-      PLAYER_HEALTH -= 1;
+      changeHealth(1);
+      DoReset();
       if (PLAYER_HEALTH <= 0) {
-        DoReset();
+        EndGame();
+        return;
       }
     }
     myBall.bounce(SIZE, SIZE);
@@ -107,24 +116,70 @@ public class Main extends Application {
     checkBlocksStatus(myBlocks);
   }
 
-  public void checkBlocksStatus(List<Block> blocks) {
+  private void displayStats(){
+    scoreText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    scoreText.setFill(Color.WHITE);
+    scoreText.setText("Score: " + PlAYER_SCORE);
+    scoreText.setX(SCORE_MESSAGE_OFFSET);
+    scoreText.setY(scoreText.getBoundsInLocal().getHeight());
+
+    healthText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    healthText.setFill(Color.WHITE);
+    healthText.setText("Health: " + PLAYER_HEALTH);
+    healthText.setX(HEALTH_MESSAGE_OFFSET);
+    healthText.setY(healthText.getBoundsInLocal().getHeight());
+
+    root.getChildren().add(healthText);
+    root.getChildren().add(scoreText);
+  }
+
+  private void changeScore(int amount) {
+    PlAYER_SCORE += amount;
+    scoreText.setText("Score: " + PlAYER_SCORE);
+  }
+
+  private void changeHealth(int amount) {
+    PLAYER_HEALTH -= amount;
+    healthText.setText("Health: " + PLAYER_HEALTH);
+  }
+
+
+  private void checkBlocksStatus(List<Block> blocks) {
     for (Block block : blocks) {
       if (root.getChildren().contains(block.getBlock())) {
         return;
       }
     }
-    DoReset();
     nextLevel();
+  }
+
+  private void EndGame() {
+    animation.pause();
+    root.getChildren().clear();
+    DisplayEndMessage();
+  }
+
+  private void DisplayEndMessage(){
+    end_message.setTextAlignment(TextAlignment.LEFT);
+    end_message.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
+    end_message.setFill(DUKE_DARK_BLUE);
+    end_message.setStroke(Color.WHITE);
+    end_message.setStrokeWidth(2);
+    end_message.setX(SIZE / 2 - end_message.getLayoutBounds().getWidth() / 2);
+    end_message.setY(SIZE / 2 - end_message.getLayoutBounds().getHeight() / 2);
+    root.getChildren().add(end_message);
+    myScene.setFill(Color.BLACK);
   }
 
   public void nextLevel() {
     LevelNumber++;
     myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
+    DoReset();
   }
 
 
-  public List<Block> getBlocksForLevel(int LEVEL_NUMBER) {
+  private List<Block> getBlocksForLevel(int LEVEL_NUMBER) {
     List<Block> blocks = new ArrayList<>();
     try {
       InputStream in = getClass().getResourceAsStream("/levels/level" + LEVEL_NUMBER + ".txt");
@@ -167,20 +222,20 @@ public class Main extends Application {
     return blocks;
   }
 
-  public void addBlocksToScene(List<Block> blocks) {
+  private void addBlocksToScene(List<Block> blocks) {
     for (Block block : blocks) {
       root.getChildren().add(block.getBlock());
     }
   }
 
-  public void SetUpBall() {
+  private void SetUpBall() {
     myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
     root.getChildren().add(myBall.getBall());
   }
 
-  public void SetUpPaddle() {
-    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 7 * SIZE / 8);
+  private void SetUpPaddle() {
+    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2 - PADDLE_WIDTH/2, 7 * SIZE / 8);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
     root.getChildren().add(myPaddle.getPaddle());
   }
@@ -251,6 +306,7 @@ public class Main extends Application {
         checkBlockHealth(block);
         System.out.println(block.getHealth());
       }
+      changeScore(1);
     }
   }
 
