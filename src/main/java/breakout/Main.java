@@ -167,9 +167,11 @@ public class Main extends Application {
   private void movePaddle(Paddle paddle) {
     if (movePaddleLeft){
       paddle.move(-PADDLE_SPEED);
+      paddle.checkEdges(SIZE);
     }
     if (movePaddleRight){
       paddle.move(PADDLE_SPEED);
+      paddle.checkEdges(SIZE);
     }
   }
 
