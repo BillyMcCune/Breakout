@@ -67,6 +67,8 @@ public class Main extends Application {
   private final Text end_message = new Text(SIZE/2,SIZE/2,lost_message);
   private Text healthText = new Text("Health: " + PLAYER_HEALTH);
   private Text scoreText = new Text("Score: " + PlAYER_SCORE);
+  private Text levelText = new Text("Level: " + LevelNumber);
+  private int LEVEL_MESSAGE_OFFSET = SIZE/2-(int)levelText.getBoundsInLocal().getWidth();
   private int SCORE_MESSAGE_OFFSET = 10;
   private int HEALTH_MESSAGE_OFFSET = SIZE-(int)healthText.getBoundsInLocal().getWidth()*2-20;
   private final Timeline animation = new Timeline();
@@ -134,6 +136,13 @@ public class Main extends Application {
     healthText.setX(HEALTH_MESSAGE_OFFSET);
     healthText.setY(healthText.getBoundsInLocal().getHeight());
 
+    levelText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    levelText.setFill(Color.WHITE);
+    levelText.setText("Level: " + LevelNumber);
+    levelText.setX(LEVEL_MESSAGE_OFFSET);
+    levelText.setY(levelText.getBoundsInLocal().getHeight());
+
+    root.getChildren().add(levelText);
     root.getChildren().add(healthText);
     root.getChildren().add(scoreText);
   }
@@ -146,6 +155,11 @@ public class Main extends Application {
   private void changeHealth(int amount) {
     PLAYER_HEALTH -= amount;
     healthText.setText("Health: " + PLAYER_HEALTH);
+  }
+
+  private void changeLevel(int amount) {
+    LevelNumber += amount;
+    levelText.setText("Level: " + LevelNumber);
   }
 
 
@@ -180,7 +194,7 @@ public class Main extends Application {
   }
 
   private void nextLevel() {
-    LevelNumber++;
+    changeLevel(1);
     myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
     DoReset();
