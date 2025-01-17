@@ -29,8 +29,9 @@ import javafx.util.Duration;
 public class Main extends Application {
 
   // useful names for constant values used
-  public static final String TITLE = "Example JavaFX Animation";
+  public static final String TITLE = "Blue Devil Breakout";
   public static final Color DUKE_BLUE = new Color(0, 0.188, 0.529, 1);
+  public static final Color DUKE_DARK_BLUE = new Color(0.0039, 0.1294, 0.4118, 1.0);
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final int SIZE = 600;
@@ -41,7 +42,7 @@ public class Main extends Application {
   public static boolean movePaddleLeft = false;
   public static boolean movePaddleRight = false;
   public static final Color BALL_COLOR = Color.WHITE;
-  public static final int BALL_SPEED = 300;
+  public static final int BALL_SPEED = 600;
   public static final int BALL_SIZE = 10;
   public static final double BALL_XDIRECTION = 0.1;
   public static final double BALL_YDIRECTION = 1;
@@ -58,6 +59,7 @@ public class Main extends Application {
   private Ball myBall;
   private Block myBlock;
   private List<Block> myBlocks;
+  private int LevelNumber = 1;
 
   /**
    * Initialize what will be displayed.
@@ -81,7 +83,7 @@ public class Main extends Application {
     root = new Group();
     SetUpPaddle();
     SetUpBall();
-    myBlocks = getBlocksForLevel(1);
+    myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
     myScene = new Scene(root, width, height, background);
     // respond to input
@@ -90,10 +92,42 @@ public class Main extends Application {
     return myScene;
   }
 
+  private void step(double elapsedTime) {
+    myBall.move(elapsedTime);
+    if (myBall.BallHitBottom(SIZE)) {
+      PLAYER_HEALTH -= 1;
+      if (PLAYER_HEALTH <= 0) {
+        DoReset();
+      }
+    }
+    myBall.bounce(SIZE, SIZE);
+    movePaddle(myPaddle);
+    checkPaddleBallCollision(myPaddle, myBall);
+    checkBallBlocksCollision(myBlocks, myBall);
+    checkBlocksStatus(myBlocks);
+  }
+
+  public void checkBlocksStatus(List<Block> blocks) {
+   for (Block block : blocks) {
+     if (root.getChildren().contains(block.getBlock())) {
+       return;
+     }
+   }
+   DoReset();
+   nextLevel();
+  }
+
+  public void nextLevel() {
+    LevelNumber++;
+    myBlocks = getBlocksForLevel(LevelNumber);
+    addBlocksToScene(myBlocks);
+  }
+
+
   public List<Block> getBlocksForLevel(int LEVEL_NUMBER) {
     List<Block> blocks = new ArrayList<>();
     try {
-      InputStream in = getClass().getResourceAsStream("/levels/level1.txt");
+      InputStream in = getClass().getResourceAsStream("/levels/level" + LEVEL_NUMBER + ".txt");
       if (in == null) {
         throw new FileNotFoundException("Could not find level1.txt in resources.");
       }
@@ -115,11 +149,12 @@ public class Main extends Application {
             case 1:
               blocks.add(new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
                   1, SIZE / MAX_BLOCKS_IN_ROW * i, SIZE / MAX_BLOCKS_IN_COL * line_counter,
-                  BALL_COLOR));
+                  Color.WHITE));
               break;
-
             case 2:
-              break;
+              blocks.add(new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
+                  1, SIZE / MAX_BLOCKS_IN_ROW * i, SIZE / MAX_BLOCKS_IN_COL * line_counter,
+                  DUKE_DARK_BLUE));
             case 3:
             default:
               break;
@@ -150,26 +185,12 @@ public class Main extends Application {
     root.getChildren().add(myPaddle.getPaddle());
   }
 
-  private void step(double elapsedTime) {
-    myBall.move(elapsedTime);
-    if (myBall.BallHitBottom(SIZE)) {
-      PLAYER_HEALTH -= 1;
-      if (PLAYER_HEALTH <= 0) {
-        DoReset();
-      }
-    }
-    myBall.bounce(SIZE, SIZE);
-    movePaddle(myPaddle);
-    checkPaddleBallCollision(myPaddle, myBall);
-    checkBallBlocksCollision(myBlocks, myBall);
-  }
-
   private void movePaddle(Paddle paddle) {
-    if (movePaddleLeft){
+    if (movePaddleLeft) {
       paddle.move(-PADDLE_SPEED);
       paddle.checkEdges(SIZE);
     }
-    if (movePaddleRight){
+    if (movePaddleRight) {
       paddle.move(PADDLE_SPEED);
       paddle.checkEdges(SIZE);
     }
@@ -247,15 +268,23 @@ public class Main extends Application {
     // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
     switch (code) {
-      case RIGHT: movePaddleRight = true; break;
-      case LEFT: movePaddleLeft = true; break;
+      case RIGHT:
+        movePaddleRight = true;
+        break;
+      case LEFT:
+        movePaddleLeft = true;
+        break;
     }
   }
 
   private void handleKeyReleased(KeyCode code) {
     switch (code) {
-      case RIGHT: movePaddleRight = false; break;
-      case LEFT: movePaddleLeft = false; break;
+      case RIGHT:
+        movePaddleRight = false;
+        break;
+      case LEFT:
+        movePaddleLeft = false;
+        break;
     }
   }
 }

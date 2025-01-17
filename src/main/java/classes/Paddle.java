@@ -1,8 +1,7 @@
 package classes;
 
-import javafx.scene.shape.Rectangle;
-import java.util.Random;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Rectangle;
 
 public class Paddle {
 

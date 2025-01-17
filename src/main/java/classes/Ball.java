@@ -13,8 +13,6 @@ public class Ball {
   private Circle ball;
   private Point2D myVelocity;
   private int health;
-  private final double leftSideCollisionDirection = -1.1;
-  private final double rightSideCollisionDirection = 1.1;
 
 
   public Ball(Paddle paddle) {
