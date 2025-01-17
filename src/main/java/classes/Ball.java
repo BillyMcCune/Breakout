@@ -55,13 +55,13 @@ public class Ball {
   public void paddleBounce(Paddle paddle) {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
     //break up the paddle into thirds
-    if(ball.getCenterX() < paddle.getPaddle().getX() + paddle.getPaddle().getWidth()/3) {
+    if (ball.getCenterX() < paddle.getPaddle().getX() + paddle.getPaddle().getWidth() / 3) {
+      myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
+    } else if (ball.getCenterX()
+        > paddle.getPaddle().getX() + 2 * paddle.getPaddle().getWidth() / 3) {
       myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
     }
-    else if (ball.getCenterX() > paddle.getPaddle().getX() + 2*paddle.getPaddle().getWidth()/3) {
-      myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
-    }
-    ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight()/2);
+    ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight() / 2);
   }
 
 

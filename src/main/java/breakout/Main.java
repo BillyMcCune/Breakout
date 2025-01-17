@@ -108,13 +108,13 @@ public class Main extends Application {
   }
 
   public void checkBlocksStatus(List<Block> blocks) {
-   for (Block block : blocks) {
-     if (root.getChildren().contains(block.getBlock())) {
-       return;
-     }
-   }
-   DoReset();
-   nextLevel();
+    for (Block block : blocks) {
+      if (root.getChildren().contains(block.getBlock())) {
+        return;
+      }
+    }
+    DoReset();
+    nextLevel();
   }
 
   public void nextLevel() {
