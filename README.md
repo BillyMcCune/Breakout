@@ -2,9 +2,6 @@
 ## Billy McCune
 
 
-DO NO FORK THIS REPOSITORY, clone it directly to your computer.
-
-
 This project implements the game of Breakout with multiple levels.
 
 ### Timeline
