@@ -38,8 +38,10 @@ public class Main extends Application {
   public static final int PADDLE_WIDTH = 100;
   public static final int PADDLE_HEIGHT = 15;
   public static final Color PADDLE_COLOR = Color.WHITE;
+  public static boolean movePaddleLeft = false;
+  public static boolean movePaddleRight = false;
   public static final Color BALL_COLOR = Color.WHITE;
-  public static final int BALL_SPEED = 150;
+  public static final int BALL_SPEED = 300;
   public static final int BALL_SIZE = 10;
   public static final double BALL_XDIRECTION = 0.1;
   public static final double BALL_YDIRECTION = 1;
@@ -83,7 +85,8 @@ public class Main extends Application {
     addBlocksToScene(myBlocks);
     myScene = new Scene(root, width, height, background);
     // respond to input
-    myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
+    myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
+    myScene.setOnKeyReleased(e -> handleKeyReleased(e.getCode()));
     return myScene;
   }
 
@@ -156,8 +159,18 @@ public class Main extends Application {
       }
     }
     myBall.bounce(SIZE, SIZE);
+    movePaddle(myPaddle);
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlocksCollision(myBlocks, myBall);
+  }
+
+  private void movePaddle(Paddle paddle) {
+    if (movePaddleLeft){
+      paddle.move(-PADDLE_SPEED);
+    }
+    if (movePaddleRight){
+      paddle.move(PADDLE_SPEED);
+    }
   }
 
   private void checkBallBlocksCollision(List<Block> blocks, Ball myBall) {
@@ -176,7 +189,7 @@ public class Main extends Application {
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {
     Shape intersect = Shape.intersect(paddle.getPaddle(), ball.getBall());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
-      myBall.paddleBounce();
+      myBall.paddleBounce(paddle);
     }
   }
 
@@ -228,18 +241,19 @@ public class Main extends Application {
     root.getChildren().remove(block.getBlock());
   }
 
-  private void handleKeyInput(KeyCode code) {
+  private void handleKeyPressed(KeyCode code) {
     // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
     switch (code) {
-      case RIGHT -> {
-        myPaddle.move(PADDLE_SPEED);
-        myPaddle.checkEdges(SIZE);
-      }
-      case LEFT -> {
-        myPaddle.move(-PADDLE_SPEED);
-        myPaddle.checkEdges(SIZE);
-      }
+      case RIGHT: movePaddleRight = true; break;
+      case LEFT: movePaddleLeft = true; break;
+    }
+  }
+
+  private void handleKeyReleased(KeyCode code) {
+    switch (code) {
+      case RIGHT: movePaddleRight = false; break;
+      case LEFT: movePaddleLeft = false; break;
     }
   }
 }

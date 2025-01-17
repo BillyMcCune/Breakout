@@ -51,8 +51,9 @@ public class Ball {
     return false;
   }
 
-  public void paddleBounce() {
+  public void paddleBounce(Paddle paddle) {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
+    ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight()/2);
   }
 
   public void blockVerticleBounce() {
