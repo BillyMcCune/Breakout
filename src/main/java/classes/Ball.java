@@ -13,6 +13,9 @@ public class Ball {
   private Circle ball;
   private Point2D myVelocity;
   private int health;
+  private final double leftSideCollisionDirection = -1.1;
+  private final double rightSideCollisionDirection = 1.1;
+
 
   public Ball(Paddle paddle) {
     this(paddle, 0, 10, 10, 3);
@@ -53,8 +56,16 @@ public class Ball {
 
   public void paddleBounce(Paddle paddle) {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
+    //break up the paddle into thirds
+    if(ball.getCenterX() < paddle.getPaddle().getX() + paddle.getPaddle().getWidth()/3) {
+      myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
+    }
+    else if (ball.getCenterX() > paddle.getPaddle().getX() + 2*paddle.getPaddle().getWidth()/3) {
+      myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
+    }
     ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight()/2);
   }
+
 
   public void blockVerticleBounce() {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
