@@ -3,6 +3,9 @@ package breakout;
 import classes.Ball;
 import classes.Block;
 import classes.Paddle;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Application;
 import javafx.css.Size;
 import javafx.scene.Group;
@@ -20,6 +23,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner;
 
 
 /**
@@ -35,7 +41,7 @@ public class Main extends Application {
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   private Scene myScene;
-  public static final int SIZE = 400;
+  public static final int SIZE = 600;
   public static final int PADDLE_SPEED = 10;
   public static final int PADDLE_WIDTH = 100;
   public static final int PADDLE_HEIGHT = 15;
@@ -45,15 +51,19 @@ public class Main extends Application {
   public static final int BALL_SIZE = 10;
   public static final double BALL_XDIRECTION = 0.1;
   public static final double BALL_YDIRECTION = 1;
-  public static final int BLOCK_HEIGHT = 50;
+  public static final int BLOCK_HEIGHT = 30;
   public static final int BLOCK_WIDTH = 100;
   public static final Color BLOCK_COLOR = Color.WHITE;
   public static final int BLOCK_HEALTH = 1;
   public static int PLAYER_HEALTH = 1;
 
+  public static int MAX_BLOCKS_IN_ROW = (int) 6;
+  public static int MAX_BLOCKS_IN_COL = (int) 20;
+
   private Paddle myPaddle;
   private Ball myBall;
   private Block myBlock;
+  private List<Block> myBlocks;
 
   public Group root;
 
@@ -75,35 +85,81 @@ public class Main extends Application {
   }
 
   public Scene setupScene(int width, int height, Paint background) {
-    myBlock = new Block(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_HEALTH, width / 2, height / 4);
-//    System.out.println(myBlock.getHealth());
-    myBlock.getBlock().setFill(BLOCK_COLOR);
+//   System.out.println(myBlock.getHealth());
     root = new Group();
     SetUpPaddle();
     SetUpBall();
-    root.getChildren().add(myBlock.getBlock());
-
+    myBlocks = getBlocksForLevel(1);
+    addBlocksToScene(myBlocks);
     myScene = new Scene(root, width, height, background);
     // respond to input
     myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     return myScene;
   }
 
-  public void SetUpBall(){
+  public List<Block> getBlocksForLevel(int LEVEL_NUMBER) {
+    List<Block> blocks = new ArrayList<>();
+    try {
+      InputStream in = getClass().getResourceAsStream("/levels/level1.txt");
+      if (in == null) {
+        throw new FileNotFoundException("Could not find level1.txt in resources.");
+      }
+      Scanner levelScanner = new Scanner(in);
+      int current_spot = 0;
+      int line_counter = 0;
+      while (levelScanner.hasNextLine() && line_counter < MAX_BLOCKS_IN_COL) {
+        line_counter++;
+        String line = levelScanner.nextLine();
+        String[] split = line.split(" ");
+        if (split.length != MAX_BLOCKS_IN_ROW) {
+          System.out.println("ERROR: Level " + LEVEL_NUMBER + " file format is incorrect");
+        }
+        for (int i = 0; i < split.length; i++) {
+          current_spot = Integer.parseInt(split[i]);
+          switch (current_spot) {
+            case 0:
+              break;
+            case 1:
+              blocks.add(new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
+                  1, SIZE / MAX_BLOCKS_IN_ROW * i, SIZE / MAX_BLOCKS_IN_COL * line_counter,
+                  BALL_COLOR));
+              break;
+
+            case 2:
+              break;
+            case 3:
+            default:
+              break;
+          }
+        }
+      }
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    return blocks;
+  }
+
+  public void addBlocksToScene(List<Block> blocks) {
+    for (Block block : blocks) {
+      root.getChildren().add(block.getBlock());
+    }
+  }
+
+  public void SetUpBall() {
     myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
     root.getChildren().add(myBall.getBall());
   }
 
-  public void SetUpPaddle(){
-    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 3 * SIZE / 4);
+  public void SetUpPaddle() {
+    myPaddle = new Paddle(PADDLE_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, SIZE / 2, 7 * SIZE / 8);
     myPaddle.getPaddle().setFill(PADDLE_COLOR);
     root.getChildren().add(myPaddle.getPaddle());
   }
 
   private void step(double elapsedTime) {
     myBall.move(elapsedTime);
-    if(myBall.BallHitBottom(SIZE)){
+    if (myBall.BallHitBottom(SIZE)) {
       PLAYER_HEALTH -= 1;
       if (PLAYER_HEALTH <= 0) {
         DoReset();
@@ -111,7 +167,13 @@ public class Main extends Application {
     }
     myBall.bounce(SIZE, SIZE);
     checkPaddleBallCollision(myPaddle, myBall);
-    checkBallBlockCollision(myBlock, myBall);
+    checkBallBlocksCollision(myBlocks, myBall);
+  }
+
+  private void checkBallBlocksCollision(List<Block> blocks, Ball myBall) {
+    for (Block block : blocks) {
+      checkBallBlockCollision(block, myBall);
+    }
   }
 
   private void DoReset() {
