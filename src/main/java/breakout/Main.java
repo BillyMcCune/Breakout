@@ -86,6 +86,7 @@ public class Main extends Application {
       + "of the Screen \n * Use left and right keys to move the paddle "
       + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
   private int HIGH_SCORE = 0;
+  private int Max_Level = 3;
 
   private void initialize_variables() {
     LevelNumber = 1;
@@ -288,6 +289,7 @@ public class Main extends Application {
   }
 
   private void nextLevel() {
+    LevelNumber = Math.min(LevelNumber, Max_Level-1);
     OnBetweenLevelSplash = false;
     root.getChildren().clear();
     increaseLevel(1);
@@ -473,6 +475,42 @@ public class Main extends Application {
         case R:
           ResetBallAndPaddle();
           break;
+        case DIGIT1:
+          LevelNumber = 0;
+          nextLevel();
+          break;
+        case DIGIT2:
+          LevelNumber = 1;
+          nextLevel();
+          break;
+        case DIGIT3:
+          LevelNumber = 2;
+          nextLevel();
+          break;
+       case DIGIT4:
+         LevelNumber = 3;
+         nextLevel();
+         break;
+       case DIGIT5:
+         LevelNumber = 4;
+         nextLevel();
+         break;
+       case DIGIT6:
+         LevelNumber = 5;
+         nextLevel();
+         break;
+       case DIGIT7:
+         LevelNumber = 6;
+         nextLevel();
+         break;
+       case DIGIT8:
+         LevelNumber = 7;
+         nextLevel();
+         break;
+       case DIGIT9:
+         LevelNumber = 8;
+         nextLevel();
+         break;
       }
     }
   }
