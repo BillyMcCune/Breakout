@@ -84,6 +84,7 @@ public class Main extends Application {
   private String listOfRules = "\n * Don't let the ball touch the bottom "
       + "of the Screen \n * Use left and right keys to move the paddle "
       + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
+  private int HIGH_SCORE = 0;
 
   private void initialize_variables() {
     LevelNumber = 1;
@@ -234,17 +235,28 @@ public class Main extends Application {
     end_message.setStroke(Color.WHITE);
     end_message.setStrokeWidth(2);
     end_message.setX(SIZE / 2 - end_message.getLayoutBounds().getWidth() / 2);
-    end_message.setY(SIZE / 2 - end_message.getLayoutBounds().getHeight() / 2);
-    Text restartText = new Text("Click or Press a Button to Restart");
-    restartText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-    restartText.setFill(Color.WHITE);
-    restartText.setX(SIZE / 2 - restartText.getLayoutBounds().getWidth() / 2);
-    restartText.setY(2 * SIZE / 3 - restartText.getLayoutBounds().getHeight() / 2);
+    end_message.setY(SIZE / 4 - end_message.getLayoutBounds().getHeight() / 2);
     if (playerWon) {
       end_message.setText(winning_message);
     }
+    HIGH_SCORE = Math.max(HIGH_SCORE, PlAYER_SCORE);
+    Text end_game_stats = new Text("Final Score: " + PlAYER_SCORE +
+        "\n\nLives Remaining: " + PLAYER_HEALTH + "\n\nLevel Reached: "
+        + LevelNumber + "\n\nHigh Score: " +  HIGH_SCORE + "\n\nPower-Ups Used: Todo");
+    end_game_stats.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    end_game_stats.setFill(Color.WHITE);
+    end_game_stats.setX(SIZE / 2 - end_game_stats.getLayoutBounds().getWidth() / 2);
+    end_game_stats.setY(end_message.getY() + end_game_stats.getBoundsInLocal().getHeight() / 2);
+    end_game_stats.setTextAlignment(TextAlignment.CENTER);
+    Text restartText = new Text("Click or Press a Button to Restart");
+    restartText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    restartText.setFill(Color.WHITE);
+    restartText.setTextAlignment(TextAlignment.CENTER);
+    restartText.setX(SIZE / 2 - restartText.getLayoutBounds().getWidth() / 2);
+    restartText.setY(end_game_stats.getY() + end_game_stats.getBoundsInLocal().getHeight() + restartText.getBoundsInLocal().getHeight());
     root.getChildren().add(end_message);
     root.getChildren().add(restartText);
+    root.getChildren().add(end_game_stats);
     myScene.setFill(Color.BLACK);
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
   }
