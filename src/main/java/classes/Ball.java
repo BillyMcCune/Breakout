@@ -12,7 +12,8 @@ public class Ball {
   private double speed;
   private Circle ball;
   private Point2D myVelocity;
-  private int health;
+  private Paddle myPaddle;
+  private int damage = 1;
 
 
   public Ball(Paddle paddle) {
@@ -23,6 +24,7 @@ public class Ball {
     myVelocity = new Point2D(speed * xDirection, speed * yDirection);
     ball = new Circle((int) paddle.getPaddle().getX() + (int) (paddle.getPaddle().getWidth() / 2),
         (int) paddle.getPaddle().getY() - (int) paddle.getPaddle().getHeight(), size);
+    this.myPaddle = paddle;
   }
 
   public Circle getBall() {
@@ -69,7 +71,45 @@ public class Ball {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
   }
 
+  public void changeSpeed(double speed) {
+    this.speed = speed;
+    myVelocity = new Point2D(speed*myVelocity.getX(), speed*myVelocity.getY());
+  }
+
+  public double getSpeed() {
+    return speed;
+  }
+
   public void blockSideBounce() {
     myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
+  }
+
+  public double getSize(){
+    return ball.getRadius();
+  }
+
+  public int getDamage() {
+    return damage;
+  }
+
+  public void setDamage(int damage) {
+    this.damage = damage;
+  }
+
+  public void changeSize(double size) {
+    this.size = size;
+    this.ball.setRadius(size);
+  }
+
+  @Override
+  public Ball clone() {
+    Ball clone = new Ball(this.myPaddle);
+    clone.XDirection = this.XDirection;
+    clone.YDirection = this.YDirection;
+    clone.size = this.size;
+    clone.speed = this.speed;
+    clone.myVelocity = new Point2D(this.myVelocity.getX(), this.myVelocity.getY());
+    clone.ball = new Circle(this.ball.getCenterX(), this.ball.getCenterY(), this.size);
+    return clone;
   }
 }

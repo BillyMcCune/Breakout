@@ -14,6 +14,8 @@ public class Block {
   private Color color;
   private Color outlineColor = Color.BLACK;
   private int outlineWidth = 2;
+  private boolean hasPowerUp = false;
+  private PowerUp powerUp;
 
   public Block(int BLOCKWIDTH, int BLOCKHEIGHT, int health, int x, int y, Color color) {
     this.color = color;
@@ -41,5 +43,19 @@ public class Block {
 
   public Color getColor() {
     return this.color;
+  }
+
+  public boolean hasPowerUp() {
+    return this.hasPowerUp;
+  }
+
+  public void givePowerUp(PowerUp powerUp) {
+    this.hasPowerUp = true;
+    this.powerUp = powerUp;
+  }
+
+  public PowerUp getPowerUpForUse() {
+    this.hasPowerUp = false;
+    return this.powerUp;
   }
 }
