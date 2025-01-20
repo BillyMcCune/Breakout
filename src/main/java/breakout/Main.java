@@ -17,12 +17,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.text.*;
 
 
 /**
@@ -112,7 +109,7 @@ public class Main extends Application {
   private void step(double elapsedTime) {
     myBall.move(elapsedTime);
     if (myBall.BallHitBottom(SIZE)) {
-      changeHealth(1);
+      decreaseHealth(1);
       DoReset();
       if (PLAYER_HEALTH <= 0) {
         EndGame();
@@ -157,7 +154,7 @@ public class Main extends Application {
     scoreText.setText("Score: " + PlAYER_SCORE);
   }
 
-  private void changeHealth(int amount) {
+  private void decreaseHealth(int amount) {
     PLAYER_HEALTH -= amount;
     healthText.setText("Health: " + PLAYER_HEALTH);
   }
@@ -357,12 +354,17 @@ public class Main extends Application {
     // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
     switch (code) {
-      case RIGHT:
-        movePaddleRight = true;
-        break;
-      case LEFT:
-        movePaddleLeft = true;
-        break;
+        case RIGHT:
+          movePaddleRight = true;
+          break;
+        case LEFT:
+          movePaddleLeft = true;
+          break;
+        case L:
+          decreaseHealth(-1);
+          break;
+
+
     }
   }
 
