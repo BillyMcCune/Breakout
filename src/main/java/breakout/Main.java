@@ -348,11 +348,12 @@ public class Main extends Application {
   }
 
   private Block createBigBallBlock(int rowNum, int colNum) {
-    PowerUp SizeUp = new PowerUp("bigball",1);
+    PowerUp random = new PowerUp("speedup",1);
     Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
-        10, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum,
+        1, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum,
         DUKE_DARK_BLUE);
-    temp.givePowerUp(SizeUp);
+    temp.givePowerUp(random);
+    System.out.println(temp.getPowerUpName());
     return temp;
   }
 

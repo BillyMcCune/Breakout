@@ -58,4 +58,11 @@ public class Block {
     this.hasPowerUp = false;
     return this.powerUp;
   }
+
+  public String getPowerUpName() {
+    if (this.hasPowerUp) {
+      return this.powerUp.getType();
+    }
+    return null;
+  }
 }
