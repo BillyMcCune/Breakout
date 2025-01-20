@@ -3,6 +3,7 @@ package breakout;
 import classes.Ball;
 import classes.Block;
 import classes.Paddle;
+import classes.PowerUp;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class Main extends Application {
       + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
   private int HIGH_SCORE = 0;
   private int Max_Level = 3;
+  private List<Ball> TempBalls = new ArrayList<>();
 
   private void initialize_variables() {
     LevelNumber = 1;
@@ -330,9 +332,8 @@ public class Main extends Application {
                   Color.WHITE));
               break;
             case 2:
-              blocks.add(new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
-                  1, SIZE / MAX_BLOCKS_IN_ROW * i, SIZE / MAX_BLOCKS_IN_COL * line_counter,
-                  DUKE_DARK_BLUE));
+              blocks.add(createBigBallBlock(i,line_counter));
+              break;
             case 3:
             default:
               break;
@@ -344,6 +345,15 @@ public class Main extends Application {
       return blocks;
     }
     return blocks;
+  }
+
+  private Block createBigBallBlock(int rowNum, int colNum) {
+    PowerUp SizeUp = new PowerUp("bigball",1);
+    Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
+        10, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum,
+        DUKE_DARK_BLUE);
+    temp.givePowerUp(SizeUp);
+    return temp;
   }
 
   private void addBlocksToScene(List<Block> blocks) {
@@ -391,6 +401,7 @@ public class Main extends Application {
   }
 
   private void ResetBallAndPaddle() {
+    System.out.println("ResetBallAndPaddle called!");
     root.getChildren().remove(myBall.getBall());
     root.getChildren().remove(myPaddle.getPaddle());
     SetUpPaddle();
@@ -435,16 +446,19 @@ public class Main extends Application {
 //            }
       if (BallBlockVerticalCollision(block, ball)) {
         ball.blockVerticleBounce();
-        block.setHealth(block.getHealth() - 1);
-        checkBlockHealth(block);
-        System.out.println(block.getHealth());
       }
+      block.setHealth(block.getHealth() - ball.getDamage());
+      checkBlockHealth(block);
+      System.out.println(block.getHealth());
       increaseScore(1);
     }
   }
 
   private void checkBlockHealth(Block block) {
-    if (block.getHealth() == 0) {
+    if (block.getHealth() <= 0) {
+      if (block.hasPowerUp()){
+        block.getPowerUpForUse().ActivatePowerUp(myBall,TempBalls,myBlocks);
+      }
       delBlock(block);
     }
   }
