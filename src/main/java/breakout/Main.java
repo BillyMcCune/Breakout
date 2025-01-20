@@ -80,6 +80,7 @@ public class Main extends Application {
   private boolean playerWon;
   private boolean gameEnded;
   private boolean OnStartingScreen = true;
+  private boolean OnBetweenLevelSplash;
   private Stage myStage;
   private String listOfRules = "\n * Don't let the ball touch the bottom "
       + "of the Screen \n * Use left and right keys to move the paddle "
@@ -94,6 +95,7 @@ public class Main extends Application {
     PlAYER_SCORE = 0;
     gameEnded = false;
     playerWon = false;
+    OnBetweenLevelSplash = false;
   }
 
   /**
@@ -125,6 +127,7 @@ public class Main extends Application {
   }
 
   public void setUpLevelScene(){
+    myScene.setFill(DUKE_BLUE);
     SetUpPaddle();
     SetUpBall();
     myBlocks = getBlocksForLevel(LevelNumber);
@@ -151,7 +154,7 @@ public class Main extends Application {
     checkPaddleBallCollision(myPaddle, myBall);
     checkBallBlocksCollision(myBlocks, myBall);
     if (checkBlocksGone(myBlocks)) {
-      nextLevel();
+      displayBetweenLevelSplashScreen();
     }
   }
 
@@ -170,6 +173,34 @@ public class Main extends Application {
     rules.setTextAlignment(TextAlignment.CENTER);
     root.getChildren().add(welcomeMessage);
     root.getChildren().add(rules);
+  }
+
+  private void displayBetweenLevelSplashScreen() {
+    OnBetweenLevelSplash = true;
+    myScene.setFill(Color.WHITE);
+    animation.pause();
+    Text stats = getStatsMessageForSplash();
+    stats.setFill(DUKE_BLUE);
+    stats.setX(SIZE / 2 - stats.getBoundsInLocal().getWidth() / 2);
+    stats.setY(SIZE / 2 - stats.getBoundsInLocal().getHeight() / 2);
+    Text MoveOn = new Text("Press Anything to Move to the Next Level");
+    MoveOn.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    MoveOn.setFill(DUKE_BLUE);
+    MoveOn.setX(SIZE / 2 - MoveOn.getBoundsInLocal().getWidth() / 2);
+    MoveOn.setY(stats.getY() + stats.getBoundsInLocal().getHeight() + MoveOn.getBoundsInLocal().getHeight());
+    root.getChildren().add(MoveOn);
+    root.getChildren().add(stats);
+    myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
+  }
+
+  private Text getStatsMessageForSplash(){
+    Text stats = new Text("Final Score: " + PlAYER_SCORE +
+        "\n\nLives Remaining: " + PLAYER_HEALTH + "\n\nLevel Reached: "
+        + LevelNumber + "\n\nHigh Score: " +  HIGH_SCORE + "\n\nPower-Ups Used: Todo");
+    stats.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    stats.setFill(Color.WHITE);
+    stats.setTextAlignment(TextAlignment.CENTER);
+    return stats;
   }
 
   private void displayStats() {
@@ -240,14 +271,9 @@ public class Main extends Application {
       end_message.setText(winning_message);
     }
     HIGH_SCORE = Math.max(HIGH_SCORE, PlAYER_SCORE);
-    Text end_game_stats = new Text("Final Score: " + PlAYER_SCORE +
-        "\n\nLives Remaining: " + PLAYER_HEALTH + "\n\nLevel Reached: "
-        + LevelNumber + "\n\nHigh Score: " +  HIGH_SCORE + "\n\nPower-Ups Used: Todo");
-    end_game_stats.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-    end_game_stats.setFill(Color.WHITE);
+    Text end_game_stats = getStatsMessageForSplash();
     end_game_stats.setX(SIZE / 2 - end_game_stats.getLayoutBounds().getWidth() / 2);
     end_game_stats.setY(end_message.getY() + end_game_stats.getBoundsInLocal().getHeight() / 2);
-    end_game_stats.setTextAlignment(TextAlignment.CENTER);
     Text restartText = new Text("Click or Press a Button to Restart");
     restartText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     restartText.setFill(Color.WHITE);
@@ -262,10 +288,11 @@ public class Main extends Application {
   }
 
   private void nextLevel() {
+    OnBetweenLevelSplash = false;
+    root.getChildren().clear();
     increaseLevel(1);
-    myBlocks = getBlocksForLevel(LevelNumber);
-    addBlocksToScene(myBlocks);
-    ResetBallAndPaddle();
+    setUpLevelScene();
+    animation.play();
   }
 
   private void playerWon() {
@@ -430,6 +457,8 @@ public class Main extends Application {
     if (gameEnded || OnStartingScreen) {
       OnStartingScreen = false;
       restart();
+    } else if (OnBetweenLevelSplash) {
+      nextLevel();
     } else {
       switch (code) {
         case RIGHT:
