@@ -5,6 +5,7 @@ import classes.Block;
 import classes.Paddle;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +15,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -43,8 +45,8 @@ public class Main extends Application {
   public static boolean movePaddleLeft = false;
   public static boolean movePaddleRight = false;
   public static final Color BALL_COLOR = Color.WHITE;
-  public static final int BALL_SPEED = 600;
-  public static final int BALL_SIZE = 10;
+  public static int BALL_SPEED;
+  public static int BALL_SIZE;
   public static final double BALL_XDIRECTION = 0.1;
   public static final double BALL_YDIRECTION = 1;
   public static final int BLOCK_HEIGHT = 30;
@@ -53,15 +55,15 @@ public class Main extends Application {
   public static final int BLOCK_HEALTH = 1;
   public static int MAX_BLOCKS_IN_ROW = 6;
   public static int MAX_BLOCKS_IN_COL = 20;
-  public static int PLAYER_HEALTH = 5;
-  public static int PlAYER_SCORE = 0;
+  public static int PLAYER_HEALTH;
+  public static int PlAYER_SCORE;
   public Group root;
   private Scene myScene;
   private Paddle myPaddle;
   private Ball myBall;
   private Block myBlock;
   private List<Block> myBlocks;
-  private int LevelNumber = 1;
+  private int LevelNumber;
   private String winning_message = "You WON!!!";
   private String lost_message = "You Lost!!!";
   private final Text end_message = new Text(SIZE / 2, SIZE / 2, lost_message);
@@ -74,12 +76,24 @@ public class Main extends Application {
       SIZE - (int) healthText.getBoundsInLocal().getWidth() * 2 - 20;
   private final Timeline animation = new Timeline();
   private boolean playerWon = false;
+  private boolean gameEnded = false;
+  private Stage myStage;
 
+ private void initialize_variables() {
+   LevelNumber = 1;
+   BALL_SPEED = 600;
+   BALL_SIZE = 10;
+   PLAYER_HEALTH = 5;
+   PlAYER_SCORE = 0;
+   gameEnded = false;
+   playerWon = false;
+ }
   /**
    * Initialize what will be displayed.
    */
   @Override
   public void start(Stage stage) {
+    myStage = stage;
     myScene = setupScene(SIZE, SIZE, DUKE_BLUE);
     stage.setScene(myScene);
     stage.setTitle(TITLE);
@@ -93,6 +107,7 @@ public class Main extends Application {
 
   public Scene setupScene(int width, int height, Paint background) {
 //   System.out.println(myBlock.getHealth());
+    initialize_variables();
     root = new Group();
     SetUpPaddle();
     SetUpBall();
@@ -107,10 +122,11 @@ public class Main extends Application {
   }
 
   private void step(double elapsedTime) {
+    displayStartingScreen();
     myBall.move(elapsedTime);
     if (myBall.BallHitBottom(SIZE)) {
       decreaseHealth(1);
-      DoReset();
+      ResetBallAndPaddle();
       if (PLAYER_HEALTH <= 0) {
         EndGame();
         return;
@@ -123,6 +139,11 @@ public class Main extends Application {
     if (checkBlocksGone(myBlocks)) {
       nextLevel();
     }
+  }
+
+  private void displayStartingScreen(){
+//    animation.stop();
+
   }
 
   private void displayStats() {
@@ -149,7 +170,7 @@ public class Main extends Application {
     root.getChildren().add(scoreText);
   }
 
-  private void changeScore(int amount) {
+  private void increaseScore(int amount) {
     PlAYER_SCORE += amount;
     scoreText.setText("Score: " + PlAYER_SCORE);
   }
@@ -159,7 +180,7 @@ public class Main extends Application {
     healthText.setText("Health: " + PLAYER_HEALTH);
   }
 
-  private void changeLevel(int amount) {
+  private void increaseLevel(int amount) {
     LevelNumber += amount;
     levelText.setText("Level: " + LevelNumber);
   }
@@ -175,6 +196,7 @@ public class Main extends Application {
   }
 
   private void EndGame() {
+    gameEnded = true;
     animation.pause();
     root.getChildren().clear();
     DisplayEndMessage();
@@ -188,18 +210,25 @@ public class Main extends Application {
     end_message.setStrokeWidth(2);
     end_message.setX(SIZE / 2 - end_message.getLayoutBounds().getWidth() / 2);
     end_message.setY(SIZE / 2 - end_message.getLayoutBounds().getHeight() / 2);
+    Text restartText = new Text("Click or Press a Button to Restart");
+    restartText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    restartText.setFill(Color.WHITE);
+    restartText.setX(SIZE / 2 - restartText.getLayoutBounds().getWidth() / 2);
+    restartText.setY(2*SIZE / 3 - restartText.getLayoutBounds().getHeight() / 2);
     if (playerWon) {
       end_message.setText(winning_message);
     }
     root.getChildren().add(end_message);
+    root.getChildren().add(restartText);
     myScene.setFill(Color.BLACK);
+    myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
   }
 
   private void nextLevel() {
-    changeLevel(1);
+    increaseLevel(1);
     myBlocks = getBlocksForLevel(LevelNumber);
     addBlocksToScene(myBlocks);
-    DoReset();
+    ResetBallAndPaddle();
   }
 
   private void playerWon() {
@@ -257,6 +286,13 @@ public class Main extends Application {
     }
   }
 
+  private void restart() {
+    animation.stop();
+    myScene = setupScene(SIZE, SIZE, DUKE_BLUE);
+    myStage.setScene(myScene);
+    animation.play();
+  }
+
   private void SetUpBall() {
     myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
     myBall.getBall().setFill(BALL_COLOR);
@@ -287,7 +323,7 @@ public class Main extends Application {
     }
   }
 
-  private void DoReset() {
+  private void ResetBallAndPaddle() {
     root.getChildren().remove(myBall.getBall());
     root.getChildren().remove(myPaddle.getPaddle());
     SetUpPaddle();
@@ -336,7 +372,7 @@ public class Main extends Application {
         checkBlockHealth(block);
         System.out.println(block.getHealth());
       }
-      changeScore(1);
+      increaseScore(1);
     }
   }
 
@@ -353,7 +389,11 @@ public class Main extends Application {
   private void handleKeyPressed(KeyCode code) {
     // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
-    switch (code) {
+    if (gameEnded){
+      restart();
+    }
+    else {
+      switch (code) {
         case RIGHT:
           movePaddleRight = true;
           break;
@@ -364,10 +404,9 @@ public class Main extends Application {
           decreaseHealth(-1);
           break;
         case R:
-          DoReset();
-
-
-
+          ResetBallAndPaddle();
+          break;
+      }
     }
   }
 
@@ -379,6 +418,12 @@ public class Main extends Application {
       case LEFT:
         movePaddleLeft = false;
         break;
+    }
+  }
+
+  private void mouseClicked(MouseEvent e) {
+    if (gameEnded){
+      restart();
     }
   }
 }
