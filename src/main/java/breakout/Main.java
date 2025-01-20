@@ -5,7 +5,6 @@ import classes.Block;
 import classes.Paddle;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,9 +18,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.text.*;
 
 
 /**
@@ -75,19 +77,24 @@ public class Main extends Application {
   private int HEALTH_MESSAGE_OFFSET =
       SIZE - (int) healthText.getBoundsInLocal().getWidth() * 2 - 20;
   private final Timeline animation = new Timeline();
-  private boolean playerWon = false;
-  private boolean gameEnded = false;
+  private boolean playerWon;
+  private boolean gameEnded;
+  private boolean OnStartingScreen = true;
   private Stage myStage;
+  private String listOfRules = "\n * Don't let the ball touch the bottom "
+      + "of the Screen \n * Use left and right keys to move the paddle "
+      + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
 
- private void initialize_variables() {
-   LevelNumber = 1;
-   BALL_SPEED = 600;
-   BALL_SIZE = 10;
-   PLAYER_HEALTH = 5;
-   PlAYER_SCORE = 0;
-   gameEnded = false;
-   playerWon = false;
- }
+  private void initialize_variables() {
+    LevelNumber = 1;
+    BALL_SPEED = 600;
+    BALL_SIZE = 10;
+    PLAYER_HEALTH = 5;
+    PlAYER_SCORE = 0;
+    gameEnded = false;
+    playerWon = false;
+  }
+
   /**
    * Initialize what will be displayed.
    */
@@ -109,11 +116,6 @@ public class Main extends Application {
 //   System.out.println(myBlock.getHealth());
     initialize_variables();
     root = new Group();
-    SetUpPaddle();
-    SetUpBall();
-    myBlocks = getBlocksForLevel(LevelNumber);
-    addBlocksToScene(myBlocks);
-    displayStats();
     myScene = new Scene(root, width, height, background);
     // respond to input
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
@@ -121,8 +123,19 @@ public class Main extends Application {
     return myScene;
   }
 
+  public void setUpLevelScene(){
+    SetUpPaddle();
+    SetUpBall();
+    myBlocks = getBlocksForLevel(LevelNumber);
+    addBlocksToScene(myBlocks);
+    displayStats();
+  }
+
   private void step(double elapsedTime) {
-    displayStartingScreen();
+    if (OnStartingScreen) {
+      displayStartingScreen();
+      return;
+    }
     myBall.move(elapsedTime);
     if (myBall.BallHitBottom(SIZE)) {
       decreaseHealth(1);
@@ -141,9 +154,21 @@ public class Main extends Application {
     }
   }
 
-  private void displayStartingScreen(){
-//    animation.stop();
-
+  private void displayStartingScreen() {
+    myScene.setFill(Color.WHITE);
+    Text welcomeMessage = new Text("Welcome to " + TITLE);
+    Text rules = new Text("Rules:" + listOfRules);
+    welcomeMessage.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    welcomeMessage.setFill(DUKE_BLUE);
+    welcomeMessage.setX(SIZE / 2 - welcomeMessage.getBoundsInLocal().getWidth() / 2);
+    welcomeMessage.setY(SIZE / 5 - welcomeMessage.getBoundsInLocal().getHeight() / 2);
+    rules.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+    rules.setFill(DUKE_BLUE);
+    rules.setX(SIZE / 2 - rules.getBoundsInLocal().getWidth() / 2);
+    rules.setY(2*SIZE / 5 - rules.getBoundsInLocal().getHeight() / 2);
+    rules.setTextAlignment(TextAlignment.CENTER);
+    root.getChildren().add(welcomeMessage);
+    root.getChildren().add(rules);
   }
 
   private void displayStats() {
@@ -214,7 +239,7 @@ public class Main extends Application {
     restartText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     restartText.setFill(Color.WHITE);
     restartText.setX(SIZE / 2 - restartText.getLayoutBounds().getWidth() / 2);
-    restartText.setY(2*SIZE / 3 - restartText.getLayoutBounds().getHeight() / 2);
+    restartText.setY(2 * SIZE / 3 - restartText.getLayoutBounds().getHeight() / 2);
     if (playerWon) {
       end_message.setText(winning_message);
     }
@@ -290,6 +315,7 @@ public class Main extends Application {
     animation.stop();
     myScene = setupScene(SIZE, SIZE, DUKE_BLUE);
     myStage.setScene(myScene);
+    setUpLevelScene();
     animation.play();
   }
 
@@ -389,10 +415,10 @@ public class Main extends Application {
   private void handleKeyPressed(KeyCode code) {
     // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
     //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
-    if (gameEnded){
+    if (gameEnded || OnStartingScreen) {
+      OnStartingScreen = false;
       restart();
-    }
-    else {
+    } else {
       switch (code) {
         case RIGHT:
           movePaddleRight = true;
@@ -422,7 +448,8 @@ public class Main extends Application {
   }
 
   private void mouseClicked(MouseEvent e) {
-    if (gameEnded){
+    if (gameEnded || OnStartingScreen) {
+      OnStartingScreen = false;
       restart();
     }
   }
