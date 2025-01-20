@@ -363,6 +363,9 @@ public class Main extends Application {
         case L:
           decreaseHealth(-1);
           break;
+        case R:
+          DoReset();
+
 
 
     }
