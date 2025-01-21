@@ -132,7 +132,7 @@ public class Main extends Application {
   }
 
   public void setUpLevelScene() {
-//    extraBall = new ArrayList<>();
+    extraBall = new ArrayList<>();
     myScene.setFill(DUKE_BLUE);
     SetUpPaddle();
     SetUpBall();
