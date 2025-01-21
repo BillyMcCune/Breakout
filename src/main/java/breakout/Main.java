@@ -84,7 +84,7 @@ public class Main extends Application {
   private boolean OnBetweenLevelSplash;
   private Stage myStage;
   private String listOfRules = "\n * Don't let the ball touch the bottom "
-      + "of the Screen \n * Use left and right keys to move the paddle "
+      + "of the Screen \n * Use left and right keys to move the paddle \n * Press H to catch and release the Ball"
       + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
   private int HIGH_SCORE = 0;
   private int Max_Level = 3;
@@ -100,6 +100,7 @@ public class Main extends Application {
     gameEnded = false;
     playerWon = false;
     OnBetweenLevelSplash = false;
+    extraBall = new ArrayList<>();
   }
 
   /**
@@ -131,6 +132,7 @@ public class Main extends Application {
   }
 
   public void setUpLevelScene() {
+//    extraBall = new ArrayList<>();
     myScene.setFill(DUKE_BLUE);
     SetUpPaddle();
     SetUpBall();
