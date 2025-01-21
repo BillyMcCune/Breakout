@@ -39,6 +39,7 @@ public class Main extends Application {
   public static final Color DUKE_BLUE = new Color(0, 0.188, 0.529, 1);
   public static final Color DUKE_DARK_BLUE = new Color(0.0039, 0.1294, 0.4118, 1.0);
   public static final Color DARK_RED = new Color(0.188, 0.188, 0.188, 1);
+  public static final Color Green = new Color(0.429, 0.429, 0.429, 1);
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final int SIZE = 600;
@@ -122,7 +123,6 @@ public class Main extends Application {
   }
 
   public Scene setupScene(int width, int height, Paint background) {
-//   System.out.println(myBlock.getHealth());
     initialize_variables();
     root = new Group();
     myScene = new Scene(root, width, height, background);
@@ -362,6 +362,8 @@ public class Main extends Application {
               break;
             case 3:
               blocks.add(createExplodingBlock(i, line_counter));
+            case 4:
+              blocks.add(createHighHealthBlock(i, line_counter));
             default:
               break;
           }
@@ -372,6 +374,12 @@ public class Main extends Application {
       return blocks;
     }
     return blocks;
+  }
+
+  private Block createHighHealthBlock(int rowNum, int colNum) {
+    Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
+        10, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum, Green);
+    return  temp;
   }
 
   private Block createExplodingBlock(int rowNum, int colNum) {
@@ -437,7 +445,6 @@ public class Main extends Application {
   }
 
   private void ResetBallAndPaddle() {
-    System.out.println("ResetBallAndPaddle called!");
     root.getChildren().remove(myBall.getBall());
     root.getChildren().remove(myPaddle.getPaddle());
     SetUpPaddle();
@@ -505,6 +512,16 @@ public class Main extends Application {
     }
   }
 
+  private void increaseBallDamage(){
+    myBall.setDamage(myBall.getDamage() + 1);
+  }
+
+  private void doSCheat(){
+    restart();
+    root.getChildren().clear();
+    OnStartingScreen = true;
+  }
+
   private void delBlock(Block block) {
     root.getChildren().remove(block.getBlock());
   }
@@ -569,6 +586,13 @@ public class Main extends Application {
           break;
         case H:
           holdBall = true;
+          break;
+        case D:
+          increaseBallDamage();
+          break;
+        case S:
+          doSCheat();
+          break;
       }
     }
   }

@@ -101,7 +101,6 @@ public class Block {
         ExplodingAreaHeight);
 
     Shape intersect = Shape.intersect(ExplodingArea, tempblock.getBlock());
-    System.out.println(intersect.getBoundsInLocal().getWidth());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
       tempblock.setHealth(tempblock.getHealth() - ExplosionDamage);
     }
