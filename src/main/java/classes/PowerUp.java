@@ -3,6 +3,7 @@ package classes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import javafx.scene.Group;
 
 public class PowerUp {
 
@@ -36,16 +37,16 @@ public class PowerUp {
     this.power = power;
   }
 
-  public void ActivatePowerUp(Ball myBall, List<Ball> TemporaryBalls, List<Block> myBlocks) {
+  public void ActivatePowerUp(Ball myBall, List<Ball> extraBall, List<Block> myBlocks, Group root) {
     switch (type) {
       case "SpeedUp":
-        handleSpeedUp(myBall, TemporaryBalls);
+        handleSpeedUp(myBall);
         break;
       case "ExtraBalls":
-        handleExtraBalls(myBall, TemporaryBalls);
+        handleExtraBalls(myBall, extraBall, root);
         break;
       case "BigBall":
-        handleBigBall(myBall, TemporaryBalls);
+        handleBigBall(myBall);
         break;
     }
   }
@@ -65,26 +66,21 @@ public class PowerUp {
     return power;
   }
 
-  public void handleSpeedUp(Ball myBall, List<Ball> TemporaryBalls) {
+  public void handleSpeedUp(Ball myBall) {
     myBall.changeSpeedUp(BallSpeedUpRate);
-   for (Ball ball : TemporaryBalls) {
-    ball.changeSpeedUp(BallSpeedUpRate);
-   }
   }
 
-  public void handleExtraBalls(Ball myBall, List<Ball> TemporaryBalls) {
-    for (int i = 0; i < NumExtraBalls; i++) {
-      TemporaryBalls.add(myBall.clone());
+  public void handleExtraBalls(Ball myBall, List<Ball> extraBall, Group root) {
+    if (extraBall.isEmpty()) {
+      Ball newBall = new Ball(myBall.getPaddle());
+      extraBall.add(newBall);
+      root.getChildren().add(extraBall.getFirst().getBall());
     }
   }
 
-  public void handleBigBall(Ball myBall, List<Ball> TemporaryBalls) {
+  public void handleBigBall(Ball myBall) {
     myBall.changeSize(myBall.getSize() * BallSizeIncrease);
     myBall.setDamage(myBall.getDamage() + BallDamageIncrease);
-    for (Ball ball : TemporaryBalls) {
-      ball.changeSize(myBall.getSize() * BallSizeIncrease);
-      ball.setDamage(ball.getDamage() + BallDamageIncrease);
-    }
   }
 
 

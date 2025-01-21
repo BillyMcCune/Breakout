@@ -88,7 +88,7 @@ public class Main extends Application {
       + "\n * Beat all the levels to win \n * Lose all your lives to lose \n * Have Fun!!!!";
   private int HIGH_SCORE = 0;
   private int Max_Level = 3;
-  private List<Ball> TempBalls = new ArrayList<>();
+  private List<Ball> extraBall = new ArrayList<>();
 
   private void initialize_variables() {
     LevelNumber = 1;
@@ -129,7 +129,7 @@ public class Main extends Application {
     return myScene;
   }
 
-  public void setUpLevelScene(){
+  public void setUpLevelScene() {
     myScene.setFill(DUKE_BLUE);
     SetUpPaddle();
     SetUpBall();
@@ -143,23 +143,43 @@ public class Main extends Application {
       displayStartingScreen();
       return;
     }
+    moveBalls(elapsedTime);
+    checkBallsCollisions();
+    movePaddle(myPaddle);
+    if (checkBlocksGone(myBlocks)) {
+      displayBetweenLevelSplashScreen();
+    }
+  }
+
+  private void moveBalls(double elapsedTime) {
+    myBall.bounce(SIZE, SIZE);
     myBall.move(elapsedTime);
     if (myBall.BallHitBottom(SIZE)) {
       decreaseHealth(1);
       ResetBallAndPaddle();
       if (PLAYER_HEALTH <= 0) {
         EndGame();
-        return;
       }
     }
-    myBall.bounce(SIZE, SIZE);
-    movePaddle(myPaddle);
-    checkPaddleBallCollision(myPaddle, myBall);
-    checkBallBlocksCollision(myBlocks, myBall);
-    if (checkBlocksGone(myBlocks)) {
-      displayBetweenLevelSplashScreen();
+    if (!extraBall.isEmpty()) {
+      extraBall.getFirst().bounce(SIZE, SIZE);
+      extraBall.getFirst().move(elapsedTime);
+      if (extraBall.getFirst().BallHitBottom(SIZE)) {
+        root.getChildren().remove(extraBall.getFirst().getBall());
+        extraBall = new ArrayList<>();
+      }
     }
   }
+
+  private void checkBallsCollisions() {
+    checkPaddleBallCollision(myPaddle, myBall);
+    checkBallBlocksCollision(myBlocks, myBall);
+    if (!extraBall.isEmpty()) {
+      checkBallBlocksCollision(myBlocks, extraBall.getFirst());
+      checkPaddleBallCollision(myPaddle, extraBall.getFirst());
+    }
+  }
+
 
   private void displayStartingScreen() {
     myScene.setFill(Color.WHITE);
@@ -172,7 +192,7 @@ public class Main extends Application {
     rules.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     rules.setFill(DUKE_BLUE);
     rules.setX(SIZE / 2 - rules.getBoundsInLocal().getWidth() / 2);
-    rules.setY(2*SIZE / 5 - rules.getBoundsInLocal().getHeight() / 2);
+    rules.setY(2 * SIZE / 5 - rules.getBoundsInLocal().getHeight() / 2);
     rules.setTextAlignment(TextAlignment.CENTER);
     root.getChildren().add(welcomeMessage);
     root.getChildren().add(rules);
@@ -190,16 +210,17 @@ public class Main extends Application {
     MoveOn.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     MoveOn.setFill(DUKE_BLUE);
     MoveOn.setX(SIZE / 2 - MoveOn.getBoundsInLocal().getWidth() / 2);
-    MoveOn.setY(stats.getY() + stats.getBoundsInLocal().getHeight() + MoveOn.getBoundsInLocal().getHeight());
+    MoveOn.setY(stats.getY() + stats.getBoundsInLocal().getHeight() + MoveOn.getBoundsInLocal()
+        .getHeight());
     root.getChildren().add(MoveOn);
     root.getChildren().add(stats);
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
   }
 
-  private Text getStatsMessageForSplash(){
+  private Text getStatsMessageForSplash() {
     Text stats = new Text("Final Score: " + PlAYER_SCORE +
         "\n\nLives Remaining: " + PLAYER_HEALTH + "\n\nLevel Reached: "
-        + LevelNumber + "\n\nHigh Score: " +  HIGH_SCORE + "\n\nPower-Ups Used: Todo");
+        + LevelNumber + "\n\nHigh Score: " + HIGH_SCORE + "\n\nPower-Ups Used: Todo");
     stats.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     stats.setFill(Color.WHITE);
     stats.setTextAlignment(TextAlignment.CENTER);
@@ -257,7 +278,7 @@ public class Main extends Application {
 
   private void EndGame() {
     gameEnded = true;
-    animation.pause();
+    animation.stop();
     root.getChildren().clear();
     DisplayEndMessage();
   }
@@ -282,7 +303,8 @@ public class Main extends Application {
     restartText.setFill(Color.WHITE);
     restartText.setTextAlignment(TextAlignment.CENTER);
     restartText.setX(SIZE / 2 - restartText.getLayoutBounds().getWidth() / 2);
-    restartText.setY(end_game_stats.getY() + end_game_stats.getBoundsInLocal().getHeight() + restartText.getBoundsInLocal().getHeight());
+    restartText.setY(end_game_stats.getY() + end_game_stats.getBoundsInLocal().getHeight()
+        + restartText.getBoundsInLocal().getHeight());
     root.getChildren().add(end_message);
     root.getChildren().add(restartText);
     root.getChildren().add(end_game_stats);
@@ -291,7 +313,7 @@ public class Main extends Application {
   }
 
   private void nextLevel() {
-    LevelNumber = Math.min(LevelNumber, Max_Level-1);
+    LevelNumber = Math.min(LevelNumber, Max_Level - 1);
     OnBetweenLevelSplash = false;
     root.getChildren().clear();
     increaseLevel(1);
@@ -332,7 +354,7 @@ public class Main extends Application {
                   Color.WHITE));
               break;
             case 2:
-              blocks.add(createBigBallBlock(i,line_counter));
+              blocks.add(createBigBallBlock(i, line_counter));
               break;
             case 3:
             default:
@@ -348,7 +370,7 @@ public class Main extends Application {
   }
 
   private Block createBigBallBlock(int rowNum, int colNum) {
-    PowerUp random = new PowerUp("speedup",1);
+    PowerUp random = new PowerUp("extraballs", 1);
     Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
         1, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum,
         DUKE_DARK_BLUE);
@@ -372,8 +394,8 @@ public class Main extends Application {
   }
 
   private void SetUpBall() {
-    myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED);
-    myBall.getBall().setFill(BALL_COLOR);
+    myBall = new Ball(myPaddle, BALL_XDIRECTION, BALL_YDIRECTION, BALL_SIZE, BALL_SPEED,
+        BALL_COLOR);
     root.getChildren().add(myBall.getBall());
   }
 
@@ -395,9 +417,9 @@ public class Main extends Application {
     }
   }
 
-  private void checkBallBlocksCollision(List<Block> blocks, Ball myBall) {
+  private void checkBallBlocksCollision(List<Block> blocks, Ball ball) {
     for (Block block : blocks) {
-      checkBallBlockCollision(block, myBall);
+      checkBallBlockCollision(block, ball);
     }
   }
 
@@ -412,7 +434,7 @@ public class Main extends Application {
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {
     Shape intersect = Shape.intersect(paddle.getPaddle(), ball.getBall());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
-      myBall.paddleBounce(paddle);
+      ball.paddleBounce(paddle);
     }
   }
 
@@ -457,8 +479,8 @@ public class Main extends Application {
 
   private void checkBlockHealth(Block block) {
     if (block.getHealth() <= 0) {
-      if (block.hasPowerUp()){
-        block.getPowerUpForUse().ActivatePowerUp(myBall,TempBalls,myBlocks);
+      if (block.hasPowerUp()) {
+        block.getPowerUpForUse().ActivatePowerUp(myBall, extraBall, myBlocks, root);
       }
       delBlock(block);
     }
@@ -502,30 +524,30 @@ public class Main extends Application {
           LevelNumber = 2;
           nextLevel();
           break;
-       case DIGIT4:
-         LevelNumber = 3;
-         nextLevel();
-         break;
-       case DIGIT5:
-         LevelNumber = 4;
-         nextLevel();
-         break;
-       case DIGIT6:
-         LevelNumber = 5;
-         nextLevel();
-         break;
-       case DIGIT7:
-         LevelNumber = 6;
-         nextLevel();
-         break;
-       case DIGIT8:
-         LevelNumber = 7;
-         nextLevel();
-         break;
-       case DIGIT9:
-         LevelNumber = 8;
-         nextLevel();
-         break;
+        case DIGIT4:
+          LevelNumber = 3;
+          nextLevel();
+          break;
+        case DIGIT5:
+          LevelNumber = 4;
+          nextLevel();
+          break;
+        case DIGIT6:
+          LevelNumber = 5;
+          nextLevel();
+          break;
+        case DIGIT7:
+          LevelNumber = 6;
+          nextLevel();
+          break;
+        case DIGIT8:
+          LevelNumber = 7;
+          nextLevel();
+          break;
+        case DIGIT9:
+          LevelNumber = 8;
+          nextLevel();
+          break;
       }
     }
   }

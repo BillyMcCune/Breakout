@@ -1,6 +1,7 @@
 package classes;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 
@@ -15,17 +16,21 @@ public class Ball implements Cloneable {
   private Paddle myPaddle;
   private int damage = 1;
   private double speedUp = 1;
+  private Color color;
 
 
   public Ball(Paddle paddle) {
-    this(paddle, 0, 10, 10, 3);
+    this(paddle, 0, 10, 10, 60, Color.WHITE);
   }
 
-  public Ball(Paddle paddle, double xDirection, double yDirection, double size, double speed) {
-    myVelocity = new Point2D( speed * xDirection, speed * yDirection);
+  public Ball(Paddle paddle, double xDirection, double yDirection, double size, double speed,
+      Color color) {
+    myVelocity = new Point2D(speed * xDirection, speed * yDirection);
     ball = new Circle((int) paddle.getPaddle().getX() + (int) (paddle.getPaddle().getWidth() / 2),
         (int) paddle.getPaddle().getY() - (int) paddle.getPaddle().getHeight(), size);
     this.myPaddle = paddle;
+    this.color = color;
+    ball.setFill(color);
   }
 
   public Circle getBall() {
@@ -84,12 +89,16 @@ public class Ball implements Cloneable {
     myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
   }
 
-  public double getSize(){
+  public double getSize() {
     return ball.getRadius();
   }
 
   public int getDamage() {
     return damage;
+  }
+
+  public Paddle getPaddle() {
+    return myPaddle;
   }
 
   public void setDamage(int damage) {
@@ -106,7 +115,9 @@ public class Ball implements Cloneable {
     try {
       Ball clone = (Ball) super.clone();
       clone.myVelocity = new Point2D(this.myVelocity.getX(), this.myVelocity.getY());
-      clone.ball = new Circle(this.ball.getCenterX(), this.ball.getCenterY(), this.size);
+      ball = new Circle(
+          (int) myPaddle.getPaddle().getX() + (int) (myPaddle.getPaddle().getWidth() / 2),
+          (int) myPaddle.getPaddle().getY() - (int) myPaddle.getPaddle().getHeight(), size);
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
