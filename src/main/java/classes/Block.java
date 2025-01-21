@@ -1,8 +1,10 @@
 package classes;
 
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 public class Block {
 
@@ -16,6 +18,8 @@ public class Block {
   private int outlineWidth = 2;
   private boolean hasPowerUp = false;
   private PowerUp powerUp;
+  private boolean isExplodingType = false;
+  private int ExplosionDamage = 2;
 
   public Block(int BLOCKWIDTH, int BLOCKHEIGHT, int health, int x, int y, Color color) {
     this.color = color;
@@ -64,5 +68,42 @@ public class Block {
       return this.powerUp.getType();
     }
     return null;
+  }
+
+  public boolean isExplodingType() {
+    return this.isExplodingType;
+  }
+
+  public void setToBeExplodingType() {
+    this.isExplodingType = true;
+  }
+
+  public void Exploding(List<Block> blocks) {
+    if (this.isExplodingType) {
+      for (Block tempblock : blocks) {
+        checkBlockIntersectionForExploding(this, tempblock);
+      }
+    }
+    this.setHealth(0);
+  }
+
+  public void checkBlockIntersectionForExploding(Block explodingBlock, Block tempblock) {
+
+    double ExplodingAreaWidth = explodingBlock.getBlock().getBoundsInLocal().getWidth() * 2;
+    double ExplodingAreaHeight = explodingBlock.getBlock().getBoundsInLocal().getHeight() * 2;
+    double ExplodingAreaX =
+        explodingBlock.getBlock().getX()
+            - explodingBlock.getBlock().getBoundsInLocal().getWidth() / 2;
+    double ExplodingAreaY =
+        explodingBlock.getBlock().getY()
+            - explodingBlock.getBlock().getBoundsInLocal().getHeight() / 2;
+    Rectangle ExplodingArea = new Rectangle(ExplodingAreaX, ExplodingAreaY, ExplodingAreaWidth,
+        ExplodingAreaHeight);
+
+    Shape intersect = Shape.intersect(ExplodingArea, tempblock.getBlock());
+    System.out.println(intersect.getBoundsInLocal().getWidth());
+    if (intersect.getBoundsInLocal().getWidth() != -1) {
+      tempblock.setHealth(tempblock.getHealth() - ExplosionDamage);
+    }
   }
 }

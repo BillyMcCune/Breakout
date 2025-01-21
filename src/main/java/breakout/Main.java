@@ -38,6 +38,7 @@ public class Main extends Application {
   public static final String TITLE = "Blue Devil Breakout";
   public static final Color DUKE_BLUE = new Color(0, 0.188, 0.529, 1);
   public static final Color DUKE_DARK_BLUE = new Color(0.0039, 0.1294, 0.4118, 1.0);
+  public static final Color DARK_RED = new Color(0.188, 0.188, 0.188, 1);
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final int SIZE = 600;
@@ -360,6 +361,7 @@ public class Main extends Application {
               blocks.add(createBigBallBlock(i, line_counter));
               break;
             case 3:
+              blocks.add(createExplodingBlock(i, line_counter));
             default:
               break;
           }
@@ -370,6 +372,13 @@ public class Main extends Application {
       return blocks;
     }
     return blocks;
+  }
+
+  private Block createExplodingBlock(int rowNum, int colNum) {
+    Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
+        1, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum, DARK_RED);
+    temp.setToBeExplodingType();
+    return temp;
   }
 
   private Block createBigBallBlock(int rowNum, int colNum) {
@@ -423,6 +432,7 @@ public class Main extends Application {
   private void checkBallBlocksCollision(List<Block> blocks, Ball ball) {
     for (Block block : blocks) {
       checkBallBlockCollision(block, ball);
+      checkBlockHealth(block);
     }
   }
 
@@ -437,10 +447,9 @@ public class Main extends Application {
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {
     Shape intersect = Shape.intersect(paddle.getPaddle(), ball.getBall());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
-      if (holdBall){
+      if (holdBall) {
         ball.callTwiceToStayAbovePaddle(paddle);
-      }
-      else{
+      } else {
         ball.paddleBounce(paddle);
       }
     }
@@ -480,7 +489,6 @@ public class Main extends Application {
       }
       block.setHealth(block.getHealth() - ball.getDamage());
       checkBlockHealth(block);
-      System.out.println(block.getHealth());
       increaseScore(1);
     }
   }
@@ -489,6 +497,9 @@ public class Main extends Application {
     if (block.getHealth() <= 0) {
       if (block.hasPowerUp()) {
         block.getPowerUpForUse().ActivatePowerUp(myBall, extraBall, myBlocks, root);
+      }
+      if (block.isExplodingType()) {
+        block.Exploding(myBlocks);
       }
       delBlock(block);
     }

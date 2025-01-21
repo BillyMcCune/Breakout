@@ -74,7 +74,7 @@ public class Ball implements Cloneable {
 
   public void callTwiceToStayAbovePaddle(Paddle paddle) {
     ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight() / 2);
-    ball.setCenterX(paddle.getPaddle().getX() + paddle.getPaddle().getWidth()/2);
+    ball.setCenterX(paddle.getPaddle().getX() + paddle.getPaddle().getWidth() / 2);
   }
 
 
