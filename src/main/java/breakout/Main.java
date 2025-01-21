@@ -89,6 +89,7 @@ public class Main extends Application {
   private int HIGH_SCORE = 0;
   private int Max_Level = 3;
   private List<Ball> extraBall = new ArrayList<>();
+  private boolean holdBall = false;
 
   private void initialize_variables() {
     LevelNumber = 1;
@@ -434,7 +435,12 @@ public class Main extends Application {
   private void checkPaddleBallCollision(Paddle paddle, Ball ball) {
     Shape intersect = Shape.intersect(paddle.getPaddle(), ball.getBall());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
-      ball.paddleBounce(paddle);
+      if (holdBall){
+        ball.callTwiceToStayAbovePaddle(paddle);
+      }
+      else{
+        ball.paddleBounce(paddle);
+      }
     }
   }
 
@@ -548,6 +554,8 @@ public class Main extends Application {
           LevelNumber = 8;
           nextLevel();
           break;
+        case H:
+          holdBall = true;
       }
     }
   }
@@ -560,6 +568,8 @@ public class Main extends Application {
       case LEFT:
         movePaddleLeft = false;
         break;
+      case H:
+        holdBall = false;
     }
   }
 

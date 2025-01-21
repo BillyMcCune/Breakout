@@ -72,6 +72,11 @@ public class Ball implements Cloneable {
     ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight() / 2);
   }
 
+  public void callTwiceToStayAbovePaddle(Paddle paddle) {
+    ball.setCenterY(paddle.getPaddle().getY() - ball.getBoundsInLocal().getHeight() / 2);
+    ball.setCenterX(paddle.getPaddle().getX() + paddle.getPaddle().getWidth()/2);
+  }
+
 
   public void blockVerticleBounce() {
     myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
