@@ -28,9 +28,9 @@ import javafx.util.Duration;
 
 
 /**
- * Feel free to completely change this code or delete it entirely.
- *
- * @author YOUR NAME HERE
+ * @author Billy McCune
+ * Purpose: Main class for this Game
+ * How to use: run the program
  */
 public class Main extends Application {
 
@@ -128,7 +128,6 @@ public class Main extends Application {
     myScene = new Scene(root, width, height, background);
     // respond to input
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
-    myScene.setOnKeyReleased(e -> handleKeyReleased(e.getCode()));
     return myScene;
   }
 
@@ -379,7 +378,7 @@ public class Main extends Application {
   private Block createHighHealthBlock(int rowNum, int colNum) {
     Block temp = new Block(BLOCK_WIDTH, BLOCK_HEIGHT,
         10, SIZE / MAX_BLOCKS_IN_ROW * rowNum, SIZE / MAX_BLOCKS_IN_COL * colNum, Green);
-    return  temp;
+    return temp;
   }
 
   private Block createExplodingBlock(int rowNum, int colNum) {
@@ -455,7 +454,7 @@ public class Main extends Application {
     Shape intersect = Shape.intersect(paddle.getPaddle(), ball.getBall());
     if (intersect.getBoundsInLocal().getWidth() != -1) {
       if (holdBall) {
-        ball.callTwiceToStayAbovePaddle(paddle);
+        ball.ballStayAbovePaddle(paddle);
       } else {
         ball.paddleBounce(paddle);
       }
@@ -512,11 +511,11 @@ public class Main extends Application {
     }
   }
 
-  private void increaseBallDamage(){
+  private void increaseBallDamage() {
     myBall.setDamage(myBall.getDamage() + 1);
   }
 
-  private void doSCheat(){
+  private void doSCheat() {
     restart();
     root.getChildren().clear();
     OnStartingScreen = true;
@@ -610,7 +609,7 @@ public class Main extends Application {
     }
   }
 
-  private void mouseClicked(MouseEvent e) {
+  private void handleMouseClicked(MouseEvent e) {
     if (gameEnded || OnStartingScreen) {
       OnStartingScreen = false;
       restart();
