@@ -128,6 +128,7 @@ public class Main extends Application {
     myScene = new Scene(root, width, height, background);
     // respond to input
     myScene.setOnKeyPressed(e -> handleKeyPressed(e.getCode()));
+    myScene.setOnKeyReleased(e -> handleKeyReleased(e.getCode()));
     return myScene;
   }
 
